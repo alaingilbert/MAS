@@ -2,7 +2,7 @@ package Nbt
 
 
 type TagNodeList struct {
-  _type byte
+  _type TagType
 }
 
 
@@ -10,6 +10,6 @@ func (t *TagNodeList) Add(item TagNode) {
 }
 
 
-func (t *TagNodeList) ValueType() byte {
+func (t *TagNodeList) ValueType() TagType {
   return t._type
 }

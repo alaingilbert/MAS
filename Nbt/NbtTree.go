@@ -10,21 +10,6 @@ import (
 )
 
 
-const (
-  TAG_END = iota
-  TAG_BYTE
-  TAG_SHORT
-  TAG_INT
-  TAG_LONG
-  TAG_FLOAT
-  TAG_DOUBLE
-  TAG_BYTE_ARRAY
-  TAG_STRING
-  TAG_LIST
-  TAG_COMPOUND
-  TAG_INT_ARRAY
-)
-
 
 type NbtTree struct {
   Stream io.Reader
@@ -42,7 +27,7 @@ func (n *NbtTree) Init(r io.Reader) {
 }
 
 func (n *NbtTree) ReadRoot() TagNodeCompound {
-  tagType := ReadByte(n.Stream)
+  tagType := TagType(ReadByte(n.Stream))
   if tagType == TAG_COMPOUND {
     n._rootName = ReadString(n.Stream)
     return n.ReadValue(tagType).(TagNodeCompound)
@@ -50,7 +35,7 @@ func (n *NbtTree) ReadRoot() TagNodeCompound {
   return TagNodeCompound{}
 }
 
-func (n *NbtTree) ReadValue(tagType byte) TagNode {
+func (n *NbtTree) ReadValue(tagType TagType) TagNode {
   switch tagType {
   case TAG_BYTE:
     return n.ReadByte()
@@ -75,7 +60,7 @@ func (n *NbtTree) ReadValue(tagType byte) TagNode {
   case TAG_STRING:
     return n.ReadString()
   default:
-    //fmt.Println("CALISS", tagType)
+    log.Println("Unknow TagNode", tagType)
     return TagNodeUnknown{}
   }
 }
@@ -141,7 +126,7 @@ func (n *NbtTree) ReadByteArray() TagNode {
 }
 
 func (n *NbtTree) ReadList() TagNode {
-  tagId := ReadByte(n.Stream)
+  tagId := TagType(ReadByte(n.Stream))
   val := TagNodeList{tagId}
   length := ReadInt(n.Stream)
   if val.ValueType() == TAG_END {
@@ -160,7 +145,7 @@ func (n *NbtTree) ReadCompound() TagNode {
 }
 
 func (n *NbtTree) ReadTag(parent TagNodeCompound) bool {
-  tagType := ReadByte(n.Stream)
+  tagType := TagType(ReadByte(n.Stream))
   if tagType != TAG_END {
     name := ReadString(n.Stream)
     value := n.ReadValue(tagType)

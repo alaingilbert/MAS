@@ -2,14 +2,14 @@ package main
 
 
 import (
+  "bytes"
+  "compress/zlib"
   "fmt"
   "io"
-  "net/http"
   "log"
-  "os"
-  "compress/zlib"
-  "bytes"
   "mas/Nbt"
+  "net/http"
+  "os"
 )
 
 
