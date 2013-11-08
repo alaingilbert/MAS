@@ -5,7 +5,7 @@ import (
   "fmt"
   "io"
   "log"
-  "mas/Core"
+  "mas/core"
   "net/http"
 )
 
@@ -21,7 +21,7 @@ func HomeHandler(w http.ResponseWriter, req *http.Request) {
 func main() {
   log.Println("Start")
 
-  world := Core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
+  world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
   region := world.RegionManager().GetRegion(-3, -5)
   fmt.Println(region.GetChunk(1, 1))
 

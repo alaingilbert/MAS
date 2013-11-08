@@ -1,4 +1,4 @@
-package Nbt
+package nbt
 
 
 type TagNodeDouble struct {

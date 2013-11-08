@@ -1,4 +1,4 @@
-package Core
+package core
 
 
 import (
@@ -6,21 +6,28 @@ import (
   "compress/zlib"
   "fmt"
   "log"
-  "mas/Nbt"
+  "mas/nbt"
   "os"
   "path"
 )
 
 
+// REGION_DIR name of the regions directory.
 const REGION_DIR = "region"
 
 
+// Region represent a minecraft region.
 type Region struct {
   m_X, m_Z int
   m_RegionManager *RegionManager
 }
 
 
+// NewRegion instantiate a Region.
+// p_RegionManager pointer to the region manager who is calling the function.
+// p_X region X axis.
+// p_Z region Z axis.
+// It returns a pointer to the region.
 func NewRegion(p_RegionManager *RegionManager, p_X, p_Z int) *Region {
   region := Region{}
   region.m_RegionManager = p_RegionManager
@@ -30,16 +37,24 @@ func NewRegion(p_RegionManager *RegionManager, p_X, p_Z int) *Region {
 }
 
 
+// FileName get the file name for the region.
+// It returns the file name for the region.
 func (r *Region) FileName() string {
   return fmt.Sprintf("r.%d.%d.mca", r.m_X, r.m_Z)
 }
 
 
+// FilePath get the file path.
+// It returns the file path.
 func (r *Region) FilePath() string {
   return path.Join(r.m_RegionManager.RegionPath(), REGION_DIR)
 }
 
 
+// GetChunk get the information for a specific chunk.
+// p_LocalX X position of the chunk in the region.
+// p_LocalZ Z position of the chunk in the region.
+// It returns a pointer to the chunk.
 func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
   chunk := NewChunk(p_LocalX, p_LocalZ)
   file, err := os.Open(path.Join(r.FilePath(), r.FileName()))
@@ -74,7 +89,7 @@ func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
         log.Fatal(err)
       }
       defer reader.Close()
-      tree := Nbt.NbtTree{}
+      tree := nbt.NbtTree{}
       tree.Init(reader)
       fmt.Println(tree)
     }
@@ -84,6 +99,8 @@ func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
 }
 
 
+// ChunkCoordinate get the offset of the chunk informations in the file.
+// It return the offset in bytes.
 func (r *Region) chunkCoordinate(p_LocalX, p_LocalZ int) int {
   return (p_LocalX + p_LocalZ * 32) * 4
 }

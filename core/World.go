@@ -1,12 +1,15 @@
-package Core
+package core
 
 
+// World represent a minecraft world.
 type World struct {
   m_Path string
   m_RegionManager *RegionManager
 }
 
 
+// NewWorld instantiate a world object.
+// It returns a pointer to a world.
 func NewWorld(p_Path string) *World {
   world := &World{}
   world.m_Path = p_Path
@@ -15,11 +18,15 @@ func NewWorld(p_Path string) *World {
 }
 
 
+// Path get the path to the world directory.
+// It returns a path to the world directory.
 func (w *World) Path() string {
   return w.m_Path
 }
 
 
+// RegionManager get the region manager.
+// It returns a pointer to the region manager.
 func (w *World) RegionManager() *RegionManager {
   return w.m_RegionManager
 }
