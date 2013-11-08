@@ -9,6 +9,7 @@ import (
   "os"
   "compress/zlib"
   "bytes"
+  "mas/Nbt"
 )
 
 
@@ -78,20 +79,22 @@ func ReadNbt(p_FileName string) {
         file.Read(compress)
 
 
-        var out bytes.Buffer
         r, err := zlib.NewReader(bytes.NewReader(compress))
         if err != nil {
           log.Fatal(err)
         }
-        io.Copy(&out, r)
         defer r.Close()
-        //fmt.Println(out.Bytes())
+
+        //var out bytes.Buffer
+        //io.Copy(&out, r)
+        //fmt.Println(out.Bytes()[0:30])
+
+        tree := Nbt.NbtTree{}
+        tree.Init(r)
       }
     }
   }
-
 }
-
 
 func HomeHandler(w http.ResponseWriter, req *http.Request) {
   fmt.Println(req.URL.Query()["x"])
@@ -100,12 +103,13 @@ func HomeHandler(w http.ResponseWriter, req *http.Request) {
 
 
 func main() {
+  log.Println("Start")
   //color := GetChunkColor(70, 30)
   //fmt.Printf("%s\n", color)
 
   ReadNbt("/Users/agilbert/Desktop/minecraft/world/region/r.-3.-5.mca")
 
-  log.Println(fmt.Sprintf("Start listening on port %d", PORT))
+  log.Println("End")
   //http.HandleFunc("/", HomeHandler)
   //http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 }
