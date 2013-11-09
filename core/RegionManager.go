@@ -1,6 +1,17 @@
 package core
 
 
+import (
+  "path"
+  "log"
+  "os"
+)
+
+
+// REGION_DIR name of the regions directory.
+const REGION_DIR = "region"
+
+
 // RegionManager is used to manage the regions.
 type RegionManager struct {
   m_RegionPath string
@@ -22,6 +33,17 @@ func NewRegionManager(p_RegionPath string) *RegionManager {
 // It returns a pointer to a region.
 func (r *RegionManager) GetRegion(p_X, p_Z int) *Region {
   return NewRegion(r, p_X, p_Z)
+}
+
+
+func (r *RegionManager) RegionFileNames() []string {
+  tilesDirectory, err := os.Open(path.Join(r.m_RegionPath, REGION_DIR))
+  if err != nil {
+    log.Fatal(err)
+  }
+  defer tilesDirectory.Close()
+  files, err := tilesDirectory.Readdirnames(0)
+  return files
 }
 
 

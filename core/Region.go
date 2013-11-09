@@ -9,17 +9,16 @@ import (
   "mas/nbt"
   "os"
   "path"
+  "strings"
 )
-
-
-// REGION_DIR name of the regions directory.
-const REGION_DIR = "region"
 
 
 // Region represent a minecraft region.
 type Region struct {
   m_X, m_Z int
   m_RegionManager *RegionManager
+  m_Chunks [1024]*Chunk
+  m_Data nbt.NbtTree
 }
 
 
@@ -51,6 +50,15 @@ func (r *Region) FilePath() string {
 }
 
 
+func (r *Region) Exists() bool {
+  path := path.Join(r.FilePath(), r.FileName())
+  _, err := os.Stat(path)
+  if err == nil { return true }
+  if os.IsNotExist(err) { return false }
+  return false
+}
+
+
 // GetChunk get the information for a specific chunk.
 // p_LocalX X position of the chunk in the region.
 // p_LocalZ Z position of the chunk in the region.
@@ -59,7 +67,8 @@ func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
   chunk := NewChunk(p_LocalX, p_LocalZ)
   file, err := os.Open(path.Join(r.FilePath(), r.FileName()))
   if err != nil {
-    log.Fatal(err)
+    log.Println(err)
+    return nil
   }
   defer file.Close()
 
@@ -89,9 +98,21 @@ func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
         log.Fatal(err)
       }
       defer reader.Close()
-      tree := nbt.NbtTree{}
-      tree.Init(reader)
-      fmt.Println(tree)
+      tree := nbt.NewNbtTree()
+
+      buf := new(bytes.Buffer)
+      buf.ReadFrom(reader)
+      s := buf.String()
+      defer func () {
+        if r := recover(); r != nil {
+          fmt.Println(s)
+        }
+      }()
+      re := strings.NewReader(s)
+      tree.Init(re)
+      chunk := NewChunk(p_LocalX, p_LocalZ)
+      chunk.SetData(tree)
+      return chunk
     }
   }
 

@@ -7,26 +7,37 @@ import (
   "io"
   "math"
   "encoding/binary"
+  "mas/logger"
 )
 
+
+func NewNbtTree() NbtTree {
+  tree := NbtTree{}
+  tree.m_Logger = logger.NewLogger()
+  return tree
+}
 
 
 type NbtTree struct {
   Stream io.Reader
   _root TagNodeCompound
   _rootName string
+  m_Logger logger.Logger
 }
 
 func (n *NbtTree) Root() TagNodeCompound {
+  n.m_Logger.Debug("Root")
   return n._root
 }
 
 func (n *NbtTree) Init(r io.Reader) {
+  n.m_Logger.Debug("Init")
   n.Stream = r
   n._root = n.ReadRoot()
 }
 
 func (n *NbtTree) ReadRoot() TagNodeCompound {
+  n.m_Logger.Debug("ReadRoot")
   tagType := TagType(ReadByte(n.Stream))
   if tagType == TAG_COMPOUND {
     n._rootName = ReadString(n.Stream)
@@ -36,6 +47,8 @@ func (n *NbtTree) ReadRoot() TagNodeCompound {
 }
 
 func (n *NbtTree) ReadValue(tagType TagType) TagNode {
+  n.m_Logger.Debug("ReadValue")
+  //fmt.Println("-> (ReadValue)", tagType)
   switch tagType {
   case TAG_BYTE:
     return n.ReadByte()
@@ -66,27 +79,32 @@ func (n *NbtTree) ReadValue(tagType TagType) TagNode {
 }
 
 func (n *NbtTree) ReadFloat() TagNode {
+  n.m_Logger.Debug("ReadFloat")
   val := TagNodeFloat{ReadFloat(n.Stream)}
   return val
 }
 
 func (n *NbtTree) ReadString() TagNode {
+  n.m_Logger.Debug("ReadString")
   str := ReadString(n.Stream)
   val := TagNodeString{str}
   return val
 }
 
 func (n *NbtTree) ReadDouble() TagNode {
+  n.m_Logger.Debug("ReadDouble")
   val := TagNodeDouble{ReadDouble(n.Stream)}
   return val
 }
 
 func (n *NbtTree) ReadShort() TagNode {
+  n.m_Logger.Debug("ReadShort")
   val := TagNodeShort{ReadShort(n.Stream)}
   return val
 }
 
 func (n *NbtTree) ReadIntArray() TagNode {
+  n.m_Logger.Debug("ReadIntArray")
   size := ReadInt(n.Stream)
   data := make([]int32, size)
   for i := int32(0); i < size; i++ {
@@ -98,22 +116,26 @@ func (n *NbtTree) ReadIntArray() TagNode {
 }
 
 func (n *NbtTree) ReadByte() TagNode {
+  n.m_Logger.Debug("ReadByte")
   val := TagNodeByte{ReadByte(n.Stream)}
   return val
 }
 
 func (n *NbtTree) ReadInt() TagNode {
+  n.m_Logger.Debug("ReadInt")
   val := TagNodeInt{ReadInt(n.Stream)}
   return val
 }
 
 func (n *NbtTree) ReadLong() TagNode {
+  n.m_Logger.Debug("ReadLong")
   long := ReadLong(n.Stream)
   val := TagNodeLong{long}
   return val
 }
 
 func (n *NbtTree) ReadByteArray() TagNode {
+  n.m_Logger.Debug("ReadByteArray")
   size := ReadInt(n.Stream)
   if size < 0 {
     log.Fatal("Read Neg")
@@ -126,6 +148,7 @@ func (n *NbtTree) ReadByteArray() TagNode {
 }
 
 func (n *NbtTree) ReadList() TagNode {
+  n.m_Logger.Debug("ReadList")
   tagId := TagType(ReadByte(n.Stream))
   val := TagNodeList{tagId}
   length := ReadInt(n.Stream)
@@ -139,13 +162,16 @@ func (n *NbtTree) ReadList() TagNode {
 }
 
 func (n *NbtTree) ReadCompound() TagNode {
+  n.m_Logger.Debug("ReadCompound")
   val := TagNodeCompound{make(map[string]TagNode)}
   for n.ReadTag(val) {}
   return val
 }
 
 func (n *NbtTree) ReadTag(parent TagNodeCompound) bool {
+  n.m_Logger.Debug("ReadTag")
   tagType := TagType(ReadByte(n.Stream))
+  //fmt.Println("-> (ReadTag)", tagType)
   if tagType != TAG_END {
     name := ReadString(n.Stream)
     value := n.ReadValue(tagType)
