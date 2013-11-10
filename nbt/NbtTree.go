@@ -13,7 +13,7 @@ import (
 
 func NewNbtTree() NbtTree {
   tree := NbtTree{}
-  tree.m_Logger = logger.NewLogger()
+  tree.m_Logger = logger.NewLogger(logger.INFO)
   return tree
 }
 

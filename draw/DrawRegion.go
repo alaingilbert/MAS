@@ -27,6 +27,10 @@ func Save(p_FileName string, p_Img *image.RGBA) {
 
 
 func FillRect(p_Img *image.RGBA, p_X, p_Z, p_Width, p_Height int, p_Color color.Color) {
+  if p_Width == 1 && p_Height == 1 {
+    p_Img.Set(p_X, p_Z, p_Color)
+    return
+  }
   for i := p_X; i < p_X + p_Width; i++ {
     for j := p_Z; j < p_Z + p_Height; j++ {
       p_Img.Set(i, j, p_Color)
