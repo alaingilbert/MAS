@@ -38,7 +38,28 @@ func main() {
     go Worker(i, world, in)
   }
 
-  for index, fileName := range world.RegionManager().RegionFileNames() {
+  files := world.RegionManager().RegionFileNames()
+  minX := 0
+  maxX := 0
+  minZ := 0
+  maxZ := 0
+
+  for index, fileName := range files {
+    if index > 50 {
+      break
+    }
+    if !strings.HasSuffix(fileName, "mca") {
+      continue
+    }
+    splits := strings.SplitN(fileName, ".", 4)
+    regionX, _ := strconv.Atoi(splits[1])
+    regionZ, _ := strconv.Atoi(splits[2])
+    if regionX < minX { minX = regionX }
+    if regionX > maxX { maxX = regionX }
+    if regionZ < minZ { minZ = regionZ }
+    if regionZ > maxZ { maxZ = regionZ }
+  }
+  for index, fileName := range files {
     if index > 50 {
       break
     }
