@@ -52,6 +52,9 @@ func RenderRegionTile(p_Region *core.Region) *image.RGBA {
   for chunkX := 0; chunkX < 32; chunkX++ {
     for chunkZ := 0; chunkZ < 32; chunkZ++ {
       chunk := p_Region.GetChunk(chunkX, chunkZ)
+      if chunk == nil {
+        continue
+      }
       heightmap := chunk.HeightMap()
       for block := 0; block < 256; block++ {
         c := uint8(heightmap[block])

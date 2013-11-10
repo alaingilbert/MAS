@@ -61,7 +61,7 @@ func main() {
   }
   for index, fileName := range files {
     if index > 50 {
-      break
+      //break
     }
     if !strings.HasSuffix(fileName, "mca") {
       continue

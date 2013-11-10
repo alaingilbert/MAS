@@ -25,11 +25,6 @@ func (c *Chunk) SetData(p_Data nbt.NbtTree) {
 }
 
 
-func (c *Chunk) Data() nbt.NbtTree {
-  return c.m_Data
-}
-
-
 func (c *Chunk) HeightMap() []int32 {
   heightmap := make([]int32, 256)
   if c.m_Data.Root().Entries["Level"] != nil {

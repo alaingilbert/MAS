@@ -64,7 +64,6 @@ func (r *Region) Exists() bool {
 // p_LocalZ Z position of the chunk in the region.
 // It returns a pointer to the chunk.
 func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
-  chunk := NewChunk(p_LocalX, p_LocalZ)
   file, err := os.Open(path.Join(r.FilePath(), r.FileName()))
   if err != nil {
     log.Println(err)
@@ -116,7 +115,7 @@ func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
     }
   }
 
-  return chunk
+  return nil
 }
 
 
