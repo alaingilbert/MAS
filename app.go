@@ -11,6 +11,7 @@ import (
   "mas/draw"
   "net/http"
   "strconv"
+  "time"
 )
 
 
@@ -25,6 +26,7 @@ func HomeHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
   log.Println("Start")
+  startTime := time.Now()
   runtime.GOMAXPROCS(4)
 
   world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
@@ -37,7 +39,7 @@ func main() {
   }
 
   for index, fileName := range world.RegionManager().RegionFileNames() {
-    if index > 10 {
+    if index > 50 {
       break
     }
     if !strings.HasSuffix(fileName, "mca") {
@@ -56,7 +58,7 @@ func main() {
   close(in)
 
 
-  log.Println("End")
+  log.Println("End", time.Since(startTime))
   //http.HandleFunc("/", HomeHandler)
   //http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 }
