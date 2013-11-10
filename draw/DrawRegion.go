@@ -6,6 +6,7 @@ import (
   "image"
   "image/png"
   "image/color"
+  "mas/core"
   "os"
 )
 
@@ -31,4 +32,37 @@ func FillRect(p_Img *image.RGBA, p_X, p_Z, p_Width, p_Height int, p_Color color.
       p_Img.Set(i, j, p_Color)
     }
   }
+}
+
+
+// RenderRegionTile render a tile for a given region.
+// p_Region the region to render.
+// It returns an image tile.
+func RenderRegionTile(p_Region *core.Region) *image.RGBA {
+  blockSize := 1
+  chunkSize := 16 * blockSize
+  regionSize := 32 * chunkSize
+
+  img := CreateImage(regionSize, regionSize)
+
+  if !p_Region.Exists() {
+    return img
+  }
+
+  for chunkX := 0; chunkX < 32; chunkX++ {
+    for chunkZ := 0; chunkZ < 32; chunkZ++ {
+      chunk := p_Region.GetChunk(chunkX, chunkZ)
+      heightmap := chunk.HeightMap()
+      for block := 0; block < 256; block++ {
+        c := uint8(heightmap[block])
+        FillRect(img,
+                 block % 16 + chunkX * chunkSize,
+                 block / 16 + chunkZ * chunkSize,
+                 blockSize,
+                 blockSize,
+                 color.RGBA{c, c, c, 255})
+      }
+    }
+  }
+  return img
 }

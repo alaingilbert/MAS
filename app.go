@@ -2,6 +2,7 @@ package main
 
 
 import (
+  "runtime"
   "strings"
   "fmt"
   "io"
@@ -9,7 +10,6 @@ import (
   "mas/core"
   "mas/draw"
   "net/http"
-  "image/color"
   "strconv"
 )
 
@@ -25,46 +25,50 @@ func HomeHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
   log.Println("Start")
+  runtime.GOMAXPROCS(4)
 
   world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
 
-  blockSize := 1
-  chunkSize := 16 * blockSize
-  regionSize := 32 * chunkSize
+  nbThread := 4
+  in := make(chan []int)
 
-  for _, fileName := range world.RegionManager().RegionFileNames() {
+  for i := 0; i < nbThread; i++ {
+    go Worker(i, world, in)
+  }
+
+  for index, fileName := range world.RegionManager().RegionFileNames() {
+    if index > 10 {
+      break
+    }
     if !strings.HasSuffix(fileName, "mca") {
       continue
     }
     splits := strings.SplitN(fileName, ".", 4)
     regionX, _ := strconv.Atoi(splits[1])
     regionZ, _ := strconv.Atoi(splits[2])
-    region := world.RegionManager().GetRegion(regionX, regionZ)
-    fmt.Println("Region", regionX, regionZ)
-    img := draw.CreateImage(regionSize, regionSize)
-    if !region.Exists() {
-      continue
-    }
-    for chunkX := 0; chunkX < 32; chunkX++ {
-      for chunkZ := 0; chunkZ < 32; chunkZ++ {
-        chunk := region.GetChunk(chunkX, chunkZ)
-        heightmap := chunk.HeightMap()
-        for block := 0; block < 256; block++ {
-          c := uint8(heightmap[block])
-          draw.FillRect(img,
-                        block % 16 + chunkX * chunkSize,
-                        block / 16 + chunkZ * chunkSize,
-                        blockSize,
-                        blockSize,
-                        color.RGBA{c, c, c, 255})
-        }
-      }
-    }
-    draw.Save(fmt.Sprintf("tiles/r%d.%d.png", regionX, regionZ), img)
+
+    data := make([]int, 2)
+    data[0] = regionX
+    data[1] = regionZ
+    in <- data
   }
+
+  close(in)
 
 
   log.Println("End")
   //http.HandleFunc("/", HomeHandler)
   //http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
+}
+
+
+func Worker(p_Id int, p_World *core.World, in chan []int) {
+  for data := range in {
+    regionX := data[0]
+    regionZ := data[1]
+    region := p_World.RegionManager().GetRegion(regionX, regionZ)
+    fmt.Println("Region", regionX, regionZ)
+    img := draw.RenderRegionTile(region)
+    draw.Save(fmt.Sprintf("tiles/r%d.%d.png", regionX, regionZ), img)
+  }
 }
