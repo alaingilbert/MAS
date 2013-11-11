@@ -134,7 +134,7 @@ func RenderRegionTile(p_Region *core.Region) *image.RGBA {
           case 106: c = color.RGBA{29, 72, 22, 255} // vine
           case 125: c = color.RGBA{89, 71, 43, 255} // double_wooden_slab
           case 88: c = color.RGBA{59, 44, 0, 255} // soul_sand
-          case 128: c = color.RGBA{59, 44, 0, 255} // sandstone_stairs
+          case 128: c = color.RGBA{245, 184, 60, 255} // sandstone_stairs
           case 49: c = color.RGBA{0, 0, 0, 255} // obsidian
           case 35: c = color.RGBA{190, 190, 190, 255} // wool
           case 92: c = color.RGBA{190, 190, 190, 255} // cake
@@ -146,7 +146,7 @@ func RenderRegionTile(p_Region *core.Region) *image.RGBA {
           case 30: c = color.RGBA{255, 255, 255, 255} // web
           case 12: c = color.RGBA{255, 213, 131, 255} // Sand
           case 83: c = color.RGBA{255, 213, 131, 255} // reeds
-          case 24: c = color.RGBA{255, 213, 131, 255} // Sandstone
+          case 24: c = color.RGBA{245, 184, 60, 255} // Sandstone
           case 103: c = color.RGBA{64, 135, 4, 255} // Melon block
           case 111: c = color.RGBA{45, 79, 16, 255} // Waterlily
           case 11: c = color.RGBA{210, 69, 0, 255} // Lava
