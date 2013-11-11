@@ -150,13 +150,14 @@ func (n *NbtTree) ReadByteArray() TagNode {
 func (n *NbtTree) ReadList() TagNode {
   n.m_Logger.Debug("ReadList")
   tagId := TagType(ReadByte(n.Stream))
-  val := TagNodeList{tagId}
   length := ReadInt(n.Stream)
+  list := make([]TagNode, length)
+  val := TagNodeList{tagId, length, list}
   if val.ValueType() == TAG_END {
-    return TagNodeList{TAG_BYTE}
+    return TagNodeList{TAG_BYTE, length, list}
   }
   for i := 0; int32(i) < length; i++ {
-    val.Add(n.ReadValue(val.ValueType()))
+    val.Add(n.ReadValue(val.ValueType()), i)
   }
   return val
 }

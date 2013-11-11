@@ -32,9 +32,10 @@ func main() {
   }
 
   files := world.RegionManager().RegionFileNames()
+  files[0] = "r.-1.1.mca"
   for index, fileName := range files {
-    if index > 50 {
-      break
+    if index > 0 {
+      //break
     }
     if !strings.HasSuffix(fileName, "mca") {
       continue
@@ -51,7 +52,6 @@ func main() {
 
   close(in)
 
-
   s_Logger.Info("End", time.Since(startTime))
 }
 
@@ -60,9 +60,10 @@ func Worker(p_Id int, p_World *core.World, in chan []int) {
   for data := range in {
     regionX := data[0]
     regionZ := data[1]
+    s_Logger.Info("Start drawing region", regionX, regionZ)
     region := p_World.RegionManager().GetRegion(regionX, regionZ)
-    s_Logger.Info("Drawing region", regionX, regionZ)
     img := draw.RenderRegionTile(region)
     draw.Save(fmt.Sprintf("tiles/r%d.%d.png", regionX, regionZ), img)
+    s_Logger.Info("End drawing region", regionX, regionZ)
   }
 }
