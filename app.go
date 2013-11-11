@@ -9,6 +9,7 @@ import (
   "runtime"
   "strconv"
   "strings"
+  "sync"
   "time"
 )
 
@@ -26,9 +27,11 @@ func main() {
 
   nbThread := 4
   in := make(chan []int)
+  waitGroup := new(sync.WaitGroup)
 
   for i := 0; i < nbThread; i++ {
-    go Worker(i, world, in)
+    waitGroup.Add(1)
+    go Worker(i, world, in, waitGroup)
   }
 
   files := world.RegionManager().RegionFileNames()
@@ -51,13 +54,16 @@ func main() {
   }
 
   close(in)
+  waitGroup.Wait()
 
   s_Logger.Info("End", time.Since(startTime))
 }
 
 
-func Worker(p_Id int, p_World *core.World, in chan []int) {
-  for data := range in {
+func Worker(p_Id int, p_World *core.World, p_In chan []int, p_WaitGroup *sync.WaitGroup) {
+  defer p_WaitGroup.Done()
+
+  for data := range p_In {
     regionX := data[0]
     regionZ := data[1]
     s_Logger.Info("Start drawing region", regionX, regionZ)
