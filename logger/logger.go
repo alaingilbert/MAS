@@ -9,7 +9,8 @@ import (
 
 const INFO int = 1
 const DEBUG int = 2
-const ERROR int = 4
+const WARNING int = 4
+const ERROR int = 8
 
 
 type Logger struct {
@@ -40,6 +41,12 @@ func (l Logger) Debug(args ...interface{}) {
 
 func (l Logger) Info(args ...interface{}) {
   if l.m_Level & INFO > 0 {
+    l.printLn(args)
+  }
+}
+
+func (l Logger) Warning(args ...interface{}) {
+  if l.m_Level & WARNING > 0 {
     l.printLn(args)
   }
 }
