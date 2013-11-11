@@ -14,12 +14,12 @@ import (
 )
 
 
-var s_Logger logger.Logger = logger.NewLogger(logger.INFO)
+var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
 
 func main() {
 
-  s_Logger.Info("Start")
+  s_Logger.Debug("Start")
   startTime := time.Now()
   runtime.GOMAXPROCS(4)
 
@@ -56,7 +56,7 @@ func main() {
   close(in)
   waitGroup.Wait()
 
-  s_Logger.Info("End", time.Since(startTime))
+  s_Logger.Debug("End", time.Since(startTime))
 }
 
 
@@ -66,10 +66,10 @@ func Worker(p_Id int, p_World *core.World, p_In chan []int, p_WaitGroup *sync.Wa
   for data := range p_In {
     regionX := data[0]
     regionZ := data[1]
-    s_Logger.Info("Start drawing region", regionX, regionZ)
+    s_Logger.Debug("Start drawing region", regionX, regionZ)
     region := p_World.RegionManager().GetRegion(regionX, regionZ)
     img := draw.RenderRegionTile(region)
     draw.Save(fmt.Sprintf("tiles/r%d.%d.png", regionX, regionZ), img)
-    s_Logger.Info("End drawing region", regionX, regionZ)
+    s_Logger.Debug("End drawing region", regionX, regionZ)
   }
 }
