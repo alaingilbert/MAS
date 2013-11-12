@@ -59,6 +59,6 @@ func Worker(p_Id int, p_WaitGroup *sync.WaitGroup, p_ChannelIn chan IJob) {
   s_Logger.Debug("Worker", p_Id, "started")
 
   for job := range p_ChannelIn {
-    s_Logger.Debug(job)
+    job.Do()
   }
 }

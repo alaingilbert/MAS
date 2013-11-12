@@ -33,5 +33,6 @@ func (j JobRenderRegionTile) Do() {
   regionZ := j.m_RegionZ
   region := j.m_World.RegionManager().GetRegion(regionX, regionZ)
   img := RenderRegionTile(region, j.m_Theme)
+  region.Dispose()
   Save(fmt.Sprintf("tiles/r.%d.%d.png", regionX, regionZ), img)
 }

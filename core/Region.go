@@ -19,6 +19,7 @@ type Region struct {
   m_RegionManager *RegionManager
   m_Chunks [1024]*Chunk
   m_Data nbt.NbtTree
+  m_File *os.File
 }
 
 
@@ -33,6 +34,12 @@ func NewRegion(p_RegionManager *RegionManager, p_X, p_Z int) *Region {
   region.m_X = p_X
   region.m_Z = p_Z
   return &region
+}
+
+
+func (r *Region) Dispose() {
+  r.m_File.Close()
+  r = nil
 }
 
 
