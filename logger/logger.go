@@ -3,6 +3,7 @@ package logger
 
 import (
   "fmt"
+  "os"
   "time"
 )
 
@@ -56,4 +57,10 @@ func (l Logger) Error(args ...interface{}) {
   if l.m_Level & ERROR > 0 {
     l.printLn(args)
   }
+}
+
+
+func (l Logger) Fatal(args ...interface{}) {
+  l.printLn(args)
+  os.Exit(0)
 }

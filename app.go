@@ -29,16 +29,18 @@ func main() {
   in := make(chan []int)
   waitGroup := new(sync.WaitGroup)
 
+  theme := core.LoadTheme("default")
+
   for i := 0; i < nbThread; i++ {
     waitGroup.Add(1)
-    go Worker(i, world, in, waitGroup)
+    go Worker(i, world, theme, in, waitGroup)
   }
 
   files := world.RegionManager().RegionFileNames()
-  files[0] = "r.-1.1.mca"
+  //files[0] = "r.-1.1.mca"
   for index, fileName := range files {
     if index > 0 {
-      break
+      //break
     }
     if !strings.HasSuffix(fileName, "mca") {
       continue
@@ -60,16 +62,16 @@ func main() {
 }
 
 
-func Worker(p_Id int, p_World *core.World, p_In chan []int, p_WaitGroup *sync.WaitGroup) {
+func Worker(p_Id int, p_World *core.World, theme map[byte]core.Block, p_In chan []int, p_WaitGroup *sync.WaitGroup) {
   defer p_WaitGroup.Done()
 
   for data := range p_In {
     regionX := data[0]
     regionZ := data[1]
-    s_Logger.Debug("Start drawing region", regionX, regionZ)
+    s_Logger.Debug("Worker", p_Id, "-> Start drawing region", regionX, regionZ)
     region := p_World.RegionManager().GetRegion(regionX, regionZ)
-    img := draw.RenderRegionTile(region)
-    draw.Save(fmt.Sprintf("tiles/r%d.%d.png", regionX, regionZ), img)
-    s_Logger.Debug("End drawing region", regionX, regionZ)
+    img := draw.RenderRegionTile(region, theme)
+    draw.Save(fmt.Sprintf("tiles/r.%d.%d.png", regionX, regionZ), img)
+    s_Logger.Debug("Worker", p_Id, "-> End drawing region", regionX, regionZ)
   }
 }
