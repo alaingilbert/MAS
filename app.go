@@ -22,17 +22,19 @@ func main() {
   runtime.GOMAXPROCS(4)
   s_Logger.Debug("Start")
 
+  // Load settings
+  // Load license
   license.Verify()
+  // Create worker pool
+  // start webserver
 
   startTime := time.Now()
-
   world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
+  theme := core.LoadTheme("default")
 
   nbThread := 4
   in := make(chan []int)
   waitGroup := new(sync.WaitGroup)
-
-  theme := core.LoadTheme("default")
 
   for i := 0; i < nbThread; i++ {
     waitGroup.Add(1)

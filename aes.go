@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-  key := []byte("a very very very very secret key") // 32 bytes
+  key := []byte("pd$5fK40sL!S?p048sCXmQ9%Z*oPa&ey") // 32 bytes
   plaintext, _ := ioutil.ReadFile("license.xml")
   ciphertext := encrypt(key, plaintext)
   s := hex.EncodeToString(ciphertext)

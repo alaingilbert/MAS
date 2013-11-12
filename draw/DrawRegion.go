@@ -12,7 +12,7 @@ import (
 )
 
 
-var s_Logger logger.Logger = logger.NewLogger(logger.WARNING)
+var s_Logger logger.Logger = logger.NewLogger(logger.DEBUG)
 
 
 func CreateImage(p_SizeX, p_SizeZ int) *image.RGBA {
@@ -73,15 +73,6 @@ func RenderRegionTile(p_Region *core.Region, theme map[byte]core.Block) *image.R
         blockId := chunk.BlockId(blockX, int(chunkY), blockZ)
         c := theme[blockId]
         c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
-
-        //alpha1 := 1.0
-        //alpha2 := 0.0
-        //alpha := alpha2 + alpha1 * (1.0 - alpha2)
-        //red := uint8((float64(chunkY) * alpha2 + float64(c.Red) * alpha1 * (1.0 - alpha2)) / alpha)
-        //green := uint8((float64(chunkY) * alpha2 + float64(c.Green) * alpha1 * (1.0 - alpha2)) / alpha)
-        //blue := uint8((float64(chunkY) * alpha2 + float64(c.Blue) * alpha1 * (1.0 - alpha2)) / alpha)
-        //c2 = color.RGBA{red, green, blue, 255}
-
 
         FillRect(img,
                  block % 16 + chunkX * chunkSize,
