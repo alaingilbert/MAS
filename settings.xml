@@ -3,4 +3,9 @@
   <Theme>default</Theme>
   <WorldPath>/Users/agilbert/Desktop/minecraft/world</WorldPath>
   <NbtVersion>Anvil</NbtVersion>
+
+  <WebServer>
+    <Host>127.0.0.1</Host>
+    <Port>8000</Port>
+  </WebServer>
 </Settings>

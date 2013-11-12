@@ -7,7 +7,7 @@ import (
 )
 
 
-var s_Logger logger.Logger = logger.NewLogger(logger.INFO)
+var s_Logger logger.Logger = logger.NewLogger(logger.DEBUG)
 
 
 type Chunk struct {

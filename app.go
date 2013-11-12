@@ -5,6 +5,7 @@ import (
   "fmt"
   "mas/core"
   "mas/draw"
+  "mas/license"
   "mas/logger"
   "runtime"
   "strconv"
@@ -18,10 +19,12 @@ var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
 
 func main() {
-
-  s_Logger.Debug("Start")
-  startTime := time.Now()
   runtime.GOMAXPROCS(4)
+  s_Logger.Debug("Start")
+
+  license.Verify()
+
+  startTime := time.Now()
 
   world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
 
