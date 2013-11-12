@@ -72,12 +72,24 @@ func RenderRegionTile(p_Region *core.Region) *image.RGBA {
         blockZ := block / 16
         blockId := chunk.BlockId(blockX, int(chunkY), blockZ)
         c := colorForBlockId(blockId)
+
+        alpha1 := 1.0
+        alpha2 := 0.0
+
+        alpha := alpha2 + alpha1 * (1.0 - alpha2)
+        red := uint8((float64(chunkY) * alpha2 + float64(c.R) * alpha1 * (1.0 - alpha2)) / alpha)
+        green := uint8((float64(chunkY) * alpha2 + float64(c.G) * alpha1 * (1.0 - alpha2)) / alpha)
+        blue := uint8((float64(chunkY) * alpha2 + float64(c.B) * alpha1 * (1.0 - alpha2)) / alpha)
+
+        c2 := color.RGBA{red, green, blue, 255}
+
+
         FillRect(img,
                  block % 16 + chunkX * chunkSize,
                  block / 16 + chunkZ * chunkSize,
                  blockSize,
                  blockSize,
-                 c)
+                 c2)
       }
     }
   }

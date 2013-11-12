@@ -38,7 +38,7 @@ func main() {
   files[0] = "r.-1.1.mca"
   for index, fileName := range files {
     if index > 0 {
-      //break
+      break
     }
     if !strings.HasSuffix(fileName, "mca") {
       continue
