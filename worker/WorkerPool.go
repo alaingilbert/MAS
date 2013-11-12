@@ -13,7 +13,7 @@ var s_Logger logger.Logger = logger.NewLogger(logger.DEBUG)
 type WorkerPool struct {
   m_NbWorker int
   m_WaitGroup *sync.WaitGroup
-  m_ChannelIn chan Job
+  m_ChannelIn chan IJob
 }
 
 
@@ -31,7 +31,7 @@ func NewWorkerPool(p_NbWorker int) *WorkerPool {
 }
 
 
-func (w *WorkerPool) Do(p_Job Job) {
+func (w *WorkerPool) Do(p_Job IJob) {
   w.m_ChannelIn <- p_Job
 }
 
@@ -43,12 +43,7 @@ func (w *WorkerPool) Wait() {
 }
 
 
-type Job interface {
-  Do()
-}
-
-
-func Worker(p_Id int, p_WaitGroup *sync.WaitGroup, p_ChannelIn chan Job) {
+func Worker(p_Id int, p_WaitGroup *sync.WaitGroup, p_ChannelIn chan IJob) {
   defer p_WaitGroup.Done()
   s_Logger.Debug("Worker", p_Id, "started")
 
