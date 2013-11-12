@@ -7,6 +7,7 @@ import (
   "mas/license"
   "mas/logger"
   "mas/worker"
+  "os"
   "runtime"
   "time"
 )
@@ -21,7 +22,12 @@ func main() {
 
   // Load settings
   // Load license
-  license.Verify()
+  isLicenseValid := license.Verify()
+  s_Logger.Debug("License valide:", isLicenseValid)
+  if !isLicenseValid {
+    s_Logger.Error("License expired.")
+    os.Exit(0)
+  }
   // Create worker pool
   workerPool := worker.NewWorkerPool(4)
   // start webserver
