@@ -2,15 +2,12 @@ package main
 
 
 import (
-  "fmt"
   "mas/core"
   "mas/draw"
   "mas/license"
   "mas/logger"
+  "mas/worker"
   "runtime"
-  "strconv"
-  "strings"
-  "sync"
   "time"
 )
 
@@ -26,57 +23,23 @@ func main() {
   // Load license
   license.Verify()
   // Create worker pool
+  workerPool := worker.NewWorkerPool(4)
   // start webserver
 
   startTime := time.Now()
   world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
   theme := core.LoadTheme("default")
 
-  nbThread := 4
-  in := make(chan []int)
-  waitGroup := new(sync.WaitGroup)
-
-  for i := 0; i < nbThread; i++ {
-    waitGroup.Add(1)
-    go Worker(i, world, theme, in, waitGroup)
-  }
-
-  files := world.RegionManager().RegionFileNames()
-  //files[0] = "r.-1.1.mca"
-  for index, fileName := range files {
+  regionsCoordinates := world.RegionManager().RegionsCoordinates()
+  for index, regionCoord := range regionsCoordinates {
     if index > 0 {
       //break
     }
-    if !strings.HasSuffix(fileName, "mca") {
-      continue
-    }
-    splits := strings.SplitN(fileName, ".", 4)
-    regionX, _ := strconv.Atoi(splits[1])
-    regionZ, _ := strconv.Atoi(splits[2])
-
-    data := make([]int, 2)
-    data[0] = regionX
-    data[1] = regionZ
-    in <- data
+    job := draw.NewJobRenderRegionTile(regionCoord[0], regionCoord[1], world, theme)
+    workerPool.Do(job)
   }
 
-  close(in)
-  waitGroup.Wait()
+  workerPool.Wait()
 
   s_Logger.Debug("End", time.Since(startTime))
-}
-
-
-func Worker(p_Id int, p_World *core.World, theme map[byte]core.Block, p_In chan []int, p_WaitGroup *sync.WaitGroup) {
-  defer p_WaitGroup.Done()
-
-  for data := range p_In {
-    regionX := data[0]
-    regionZ := data[1]
-    s_Logger.Debug("Worker", p_Id, "-> Start drawing region", regionX, regionZ)
-    region := p_World.RegionManager().GetRegion(regionX, regionZ)
-    img := draw.RenderRegionTile(region, theme)
-    draw.Save(fmt.Sprintf("tiles/r.%d.%d.png", regionX, regionZ), img)
-    s_Logger.Debug("Worker", p_Id, "-> End drawing region", regionX, regionZ)
-  }
 }

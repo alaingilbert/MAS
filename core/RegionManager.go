@@ -5,6 +5,8 @@ import (
   "path"
   "log"
   "os"
+  "strconv"
+  "strings"
 )
 
 
@@ -43,7 +45,28 @@ func (r *RegionManager) RegionFileNames() []string {
   }
   defer tilesDirectory.Close()
   files, err := tilesDirectory.Readdirnames(0)
-  return files
+  newFiles := make([]string, len(files))
+  for index, file := range files {
+    if !strings.HasSuffix(file, "mca") {
+      continue
+    }
+    newFiles[index] = file
+  }
+  return newFiles
+}
+
+
+func (r *RegionManager) RegionsCoordinates() [][2]int {
+  files := r.RegionFileNames()
+  result := make([][2]int, len(files))
+  for index, fileName := range files {
+    splits := strings.SplitN(fileName, ".", 4)
+    regionX, _ := strconv.Atoi(splits[1])
+    regionZ, _ := strconv.Atoi(splits[2])
+    result[index][0] = regionX
+    result[index][1] = regionZ
+  }
+  return result
 }
 
 
