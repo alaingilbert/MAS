@@ -26,6 +26,7 @@ type Owner struct {
 }
 
 
+// Verify will tell you if the license file is valid and not expired.
 func Verify() bool {
   license := []byte(_DecryptLicense())
   var lic License
@@ -36,9 +37,12 @@ func Verify() bool {
 }
 
 
+// _DecryptLicense decrypt the license.key file.
+// It returns the license xml string.
 func _DecryptLicense() string {
   file, _ := ioutil.ReadFile("license.key")
   fileStr := strings.TrimSpace(string(file))
+  fileStr = strings.Replace(fileStr, "\n", "", -1)
   d, _ := hex.DecodeString(fileStr)
   key := []byte("pd$5fK40sL!S?p048sCXmQ9%Z*oPa&ey")
   license := crypto.Decrypt(key, d)

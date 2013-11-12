@@ -46,7 +46,7 @@ func FillRect(p_Img *image.RGBA, p_X, p_Z, p_Width, p_Height int, p_Color color.
 // RenderRegionTile render a tile for a given region.
 // p_Region the region to render.
 // It returns an image tile.
-func RenderRegionTile(p_Region *core.Region, theme map[byte]core.Block) *image.RGBA {
+func RenderRegionTile(p_Region *core.Region, p_Theme map[byte]core.Block) *image.RGBA {
   blockSize := 1
   chunkSize := 16 * blockSize
   regionSize := 32 * chunkSize
@@ -71,7 +71,7 @@ func RenderRegionTile(p_Region *core.Region, theme map[byte]core.Block) *image.R
         blockX := block % 16
         blockZ := block / 16
         blockId := chunk.BlockId(blockX, int(chunkY), blockZ)
-        c := theme[blockId]
+        c := p_Theme[blockId]
         c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
 
         FillRect(img,
