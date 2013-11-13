@@ -6,6 +6,7 @@ import (
   "mas/draw"
   "mas/license"
   "mas/logger"
+  "mas/web"
   "mas/worker"
   "os"
   "runtime"
@@ -21,6 +22,7 @@ func main() {
   s_Logger.Debug("Start")
 
   // Load settings
+
   // Load license
   isLicenseValid := license.Verify()
   s_Logger.Debug("License valide:", isLicenseValid)
@@ -28,9 +30,12 @@ func main() {
     s_Logger.Error("License expired.")
     os.Exit(0)
   }
+
   // Create worker pool
   workerPool := worker.NewWorkerPool(4)
+
   // start webserver
+  web.Server()
 
   startTime := time.Now()
   world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")

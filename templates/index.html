@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/leaflet.css" />
+    <script src="/static/js/leaflet.js"></script>
+    <style>
+      html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="map" style="width: 100%; height: 100%"></div>
+    <script>
+      L.Projection.NoWrap = {
+        project: function (latlng) {
+          return new L.Point(latlng.lng, latlng.lat);
+        },
+        unproject: function (point, unbounded) {
+          return new L.LatLng(point.y, point.x, true);
+        }
+      };
+
+      L.CRS.Direct = L.Util.extend({}, L.CRS, {
+        code: 'Direct',
+
+        projection: L.Projection.NoWrap,
+        transformation: new L.Transformation(1, 0, 1, 0)
+      });
+      var map = L.map('map', {
+        worldCopyJump: false,
+        crs: L.CRS.Direct
+      }).setView([0, 0], 2);
+      L.tileLayer('http://127.0.0.1:8000/tile/?z={y}&x={x}&y={z}', {
+        tileSize: 512,
+        continuousWorld: true
+      }).addTo(map);
+    </script>
+  </body>
+</html>

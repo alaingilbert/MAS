@@ -25,6 +25,7 @@ func NewWorkerPool(p_NbWorker int) *WorkerPool {
   workerPool := WorkerPool{}
   workerPool.m_NbWorker = p_NbWorker
   workerPool.m_WaitGroup = new(sync.WaitGroup)
+  workerPool.m_ChannelIn = make(chan IJob)
 
   for i := 0; i < workerPool.m_NbWorker; i++ {
     workerPool.m_WaitGroup.Add(1)

@@ -37,12 +37,6 @@ func NewRegion(p_RegionManager *RegionManager, p_X, p_Z int) *Region {
 }
 
 
-func (r *Region) Dispose() {
-  r.m_File.Close()
-  r = nil
-}
-
-
 // FileName get the file name for the region.
 // It returns the file name for the region.
 func (r *Region) FileName() string {

@@ -45,12 +45,12 @@ func (r *RegionManager) RegionFileNames() []string {
   }
   defer tilesDirectory.Close()
   files, err := tilesDirectory.Readdirnames(0)
-  newFiles := make([]string, len(files))
-  for index, file := range files {
+  var newFiles []string
+  for _, file := range files {
     if !strings.HasSuffix(file, "mca") {
       continue
     }
-    newFiles[index] = file
+    newFiles = append(newFiles, file)
   }
   return newFiles
 }

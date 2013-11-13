@@ -16,12 +16,8 @@ func main() {
   plaintext, _ := ioutil.ReadFile("license.xml")
   ciphertext := encrypt(key, plaintext)
   s := hex.EncodeToString(ciphertext)
-  criss, _ := hex.DecodeString(s)
-  fmt.Println(s, decrypt(key, criss))
+  fmt.Println(s)
 }
-
-// See recommended IV creation from ciphertext below
-//var iv = []byte{35, 46, 57, 24, 85, 35, 24, 74, 87, 35, 88, 98, 66, 32, 14, 05}
 
 func encodeBase64(b []byte) string {
   return base64.StdEncoding.EncodeToString(b)
