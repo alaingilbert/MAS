@@ -90,3 +90,38 @@ func TestNbChunk(t *testing.T) {
   nbChunk = NbChunk(3)
   if nbChunk != 4 { t.Fail() }
 }
+
+
+func TestGetScale(t *testing.T) {
+  scale := GetScale(1)
+  if scale != 1 { t.Fail() }
+  scale = GetScale(2)
+  if scale != 2 { t.Fail() }
+  scale = GetScale(3)
+  if scale != 4 { t.Fail() }
+  scale = GetScale(4)
+  if scale != 8 { t.Fail() }
+}
+
+
+func TestSize(t *testing.T) {
+  z := 1
+  scale := GetScale(z)
+  nbChunk := NbChunk(z)
+  if nbChunk * 16 * scale != 256  { t.Fail() }
+
+  z = 2
+  scale = GetScale(z)
+  nbChunk = NbChunk(z)
+  if nbChunk * 16 * scale != 256  { t.Fail() }
+
+  z = 3
+  scale = GetScale(z)
+  nbChunk = NbChunk(z)
+  if nbChunk * 16 * scale != 256  { t.Fail() }
+
+  z = 4
+  scale = GetScale(z)
+  nbChunk = NbChunk(z)
+  if nbChunk * 16 * scale != 256  { t.Fail() }
+}
