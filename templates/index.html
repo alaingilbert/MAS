@@ -30,7 +30,7 @@
         worldCopyJump: false,
         crs: L.CRS.Direct
       }).setView([0, 0], 2);
-      L.tileLayer('http://127.0.0.1:8000/tile/?z={y}&x={x}&y={z}', {
+      L.tileLayer('/tile/?z={y}&x={x}&y={z}', {
         tileSize: 512,
         continuousWorld: true
       }).addTo(map);
