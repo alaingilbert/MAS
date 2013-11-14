@@ -8,6 +8,7 @@ import (
   "image/color"
   "mas/core"
   "mas/logger"
+  "math"
   "os"
 )
 
@@ -40,6 +41,28 @@ func FillRect(p_Img *image.RGBA, p_X, p_Z, p_Width, p_Height int, p_Color color.
       p_Img.Set(i, j, p_Color)
     }
   }
+}
+
+
+func GetRegionFromXYZ(x, y, z int) (int, int) {
+  var regionX int = int(math.Floor(float64(x) / (math.Pow(2, float64(z)))))
+  var regionZ int = int(math.Floor(float64(y) / (math.Pow(2, float64(z)))))
+  return regionX, regionZ
+}
+
+
+func StartingChunk(x, z int) int {
+  return x * int(32 / math.Pow(2, float64(z)))
+}
+
+
+func NbChunk(z int) int {
+  return int(32 / math.Pow(2, float64(z)))
+}
+
+
+func RenderTile(x, y, z int) {
+  //regionX, regionZ := GetRegionFromXYZ(x, y, z)
 }
 
 
