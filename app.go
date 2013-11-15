@@ -15,7 +15,6 @@ import (
   "time"
   "strconv"
   "html/template"
-  "io"
   "io/ioutil"
   "mas/draw"
 )
@@ -87,21 +86,28 @@ func LeafletZoomOutHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 
+func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
+  if !m_LicenseValid {
+    tmpl, err := template.ParseFiles("templates/license.html")
+    if err != nil {
+      fmt.Println(err)
+    }
+    tmpl.Execute(res, map[string] string {"title": "Invalid License"})
+  }
+}
+
+
 func Server() {
   s_Logger.Debug("Start web server")
   m := martini.Classic()
-  //m.Use(martini.Static("static"))
-  m.Use(func(res http.ResponseWriter, req *http.Request) {
-    if !m_LicenseValid {
-      io.WriteString(res, "LICENSE EXPIRED")
-    }
-  })
+  m.Use(martini.Static("static"))
+  m.Use(LicenseMiddleware)
   m.Get("/", HomeHandler)
   m.Get("/tile/", TileHandler)
-  m.Get("/static/css/leaflet.css", LeafletCssHandler)
+  //m.Get("/static/css/leaflet.css", LeafletCssHandler)
   m.Get("/static/css/images/zoom-in.png", LeafletZoomInHandler)
   m.Get("/static/css/images/zoom-out.png", LeafletZoomOutHandler)
-  m.Get("/static/js/leaflet.js", LeafletJsHandler)
+  //m.Get("/static/js/leaflet.js", LeafletJsHandler)
   m.Run()
 }
 
