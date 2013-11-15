@@ -30,11 +30,11 @@
         crs: L.CRS.Direct,
         zoom: 1,
         minZoom: 1,
-        maxZoom: 1,
-        zoomControl: false
-      }).setView([0, 0], 2);
-      L.tileLayer('/tile/?z={y}&x={x}&y={z}', {
-        tileSize: 512,
+        maxZoom: 5
+        //zoomAnimation: false,
+      }).setView([1, 0], 1);
+      L.tileLayer('/tile/?z={z}&x={x}&y={y}', {
+        tileSize: 256,
         continuousWorld: true
       }).addTo(map);
     </script>

@@ -49,36 +49,52 @@ func TestDrawtile(t *testing.T) {
 
 
 func TestStartingChunk(t *testing.T) {
-  chunk := StartingChunk(0, 1)
-  if chunk != 0 { t.Fail() }
+  chunk := StartingChunk(-2, 1)
+  if chunk != 0 { t.Fatal(chunk) }
+  chunk = StartingChunk(-1, 1)
+  if chunk != 16 { t.Fatal(chunk) }
+  chunk = StartingChunk(0, 1)
+  if chunk != 0 { t.Fatal(chunk) }
   chunk = StartingChunk(1, 1)
-  if chunk != 16 { t.Fail() }
+  if chunk != 16 { t.Fatal(chunk) }
+  chunk = StartingChunk(2, 1)
+  if chunk != 0 { t.Fatal(chunk) }
+  chunk = StartingChunk(3, 1)
+  if chunk != 16 { t.Fatal(chunk) }
 
+  chunk = StartingChunk(-4, 2)
+  if chunk != 0 { t.Fatal(chunk) }
+  chunk = StartingChunk(-3, 2)
+  if chunk != 8 { t.Fatal(chunk) }
+  chunk = StartingChunk(-2, 2)
+  if chunk != 16 { t.Fatal(chunk) }
+  chunk = StartingChunk(-1, 2)
+  if chunk != 24 { t.Fatal(chunk) }
   chunk = StartingChunk(0, 2)
-  if chunk != 0 { t.Fail() }
+  if chunk != 0 { t.Fatal(chunk) }
   chunk = StartingChunk(1, 2)
-  if chunk != 8 { t.Fail() }
+  if chunk != 8 { t.Fatal(chunk) }
   chunk = StartingChunk(2, 2)
-  if chunk != 16 { t.Fail() }
+  if chunk != 16 { t.Fatal(chunk) }
   chunk = StartingChunk(3, 2)
-  if chunk != 24 { t.Fail() }
+  if chunk != 24 { t.Fatal(chunk) }
 
   chunk = StartingChunk(0, 3)
-  if chunk != 0 { t.Fail() }
+  if chunk != 0 { t.Fatal(chunk) }
   chunk = StartingChunk(1, 3)
-  if chunk != 4 { t.Fail() }
+  if chunk != 4 { t.Fatal(chunk) }
   chunk = StartingChunk(2, 3)
-  if chunk != 8 { t.Fail() }
+  if chunk != 8 { t.Fatal(chunk) }
   chunk = StartingChunk(3, 3)
-  if chunk != 12 { t.Fail() }
+  if chunk != 12 { t.Fatal(chunk) }
   chunk = StartingChunk(4, 3)
-  if chunk != 16 { t.Fail() }
+  if chunk != 16 { t.Fatal(chunk) }
   chunk = StartingChunk(5, 3)
-  if chunk != 20 { t.Fail() }
+  if chunk != 20 { t.Fatal(chunk) }
   chunk = StartingChunk(6, 3)
-  if chunk != 24 { t.Fail() }
+  if chunk != 24 { t.Fatal(chunk) }
   chunk = StartingChunk(7, 3)
-  if chunk != 28 { t.Fail() }
+  if chunk != 28 { t.Fatal(chunk) }
 }
 
 

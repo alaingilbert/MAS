@@ -3,32 +3,37 @@ package web
 
 import (
   "os"
-  "io"
   "io/ioutil"
   "fmt"
+  "mas/core"
   "mas/logger"
+  "mas/draw"
   "net/http"
   "image/png"
   "html/template"
+  "strconv"
 )
 
+var world *core.World = core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
+var theme map[byte]core.Block = core.LoadTheme("default")
 
 var s_Logger logger.Logger = logger.NewLogger(logger.DEBUG)
 
 
-const PORT int = 81
+const PORT int = 8000
 
 
 func TileHandler(w http.ResponseWriter, req *http.Request) {
-  x := req.URL.Query()["x"][0]
-  y := req.URL.Query()["y"][0]
-  z := req.URL.Query()["z"][0]
-  fileName := fmt.Sprintf("tiles/r.%s.%s.png", x ,z)
+  x, _ := strconv.Atoi(req.URL.Query()["x"][0])
+  y, _ := strconv.Atoi(req.URL.Query()["y"][0])
+  z, _ := strconv.Atoi(req.URL.Query()["z"][0])
+  fileName := fmt.Sprintf("tiless/r.%s.%s.png", x ,z)
   s_Logger.Debug("Serve tile x:", x, "y:", y, "z:", z)
   file, err := os.Open(fileName)
   if err != nil {
-    http.NotFound(w, req)
-    io.WriteString(w, "FileNotFound")
+    img := draw.RenderTile(x, y, z, world, theme)
+    png.Encode(w, img)
+    //http.NotFound(w, req)
     return
   }
   defer file.Close()

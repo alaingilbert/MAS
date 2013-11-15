@@ -52,7 +52,10 @@ func GetRegionFromXYZ(x, y, z int) (int, int) {
 
 
 func StartingChunk(x, z int) int {
-  return x * int(32 / math.Pow(2, float64(z)))
+  twoExpZ := int(math.Pow(2, float64(z)))
+  mod := ((x % twoExpZ) + twoExpZ) % twoExpZ
+  tmp := mod * int(32 / twoExpZ)
+  return tmp
 }
 
 
@@ -69,6 +72,8 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
   startingChunkZ := StartingChunk(y, z)
   nbChunk := NbChunk(z)
   scale := GetScale(z)
+
+  s_Logger.Debug(x, y, regionX, regionZ, startingChunkX, startingChunkZ, nbChunk, scale)
 
   img := CreateImage(256, 256)
   region := p_World.RegionManager().GetRegion(regionX, regionZ)
@@ -90,8 +95,8 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
         c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
 
         FillRect(img,
-                 block % 16 + chunkX * chunkSize * scale,
-                 block / 16 + chunkZ * chunkSize * scale,
+                 (block % 16 + (chunkX-startingChunkX) * chunkSize) * scale,
+                 (block / 16 + (chunkZ-startingChunkZ) * chunkSize) * scale,
                  blockSize * scale,
                  blockSize * scale,
                  c2)
