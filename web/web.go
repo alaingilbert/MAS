@@ -6,13 +6,17 @@ import (
   "io"
   "io/ioutil"
   "fmt"
+  "mas/logger"
   "net/http"
   "image/png"
   "html/template"
 )
 
 
-const PORT int = 8000
+var s_Logger logger.Logger = logger.NewLogger(logger.DEBUG)
+
+
+const PORT int = 81
 
 
 func TileHandler(w http.ResponseWriter, req *http.Request) {
@@ -20,7 +24,7 @@ func TileHandler(w http.ResponseWriter, req *http.Request) {
   y := req.URL.Query()["y"][0]
   z := req.URL.Query()["z"][0]
   fileName := fmt.Sprintf("tiles/r.%s.%s.png", x ,z)
-  fmt.Println("Serve:", x, y, z, fileName)
+  s_Logger.Debug("Serve tile x:", x, "y:", y, "z:", z)
   file, err := os.Open(fileName)
   if err != nil {
     http.NotFound(w, req)
@@ -69,6 +73,7 @@ func LeafletZoomOutHandler(w http.ResponseWriter, req *http.Request) {
 
 
 func Server() {
+  s_Logger.Debug("Start web server")
   http.HandleFunc("/tile/", TileHandler)
   http.HandleFunc("/static/css/leaflet.css", LeafletCssHandler)
   http.HandleFunc("/static/css/images/zoom-in.png", LeafletZoomInHandler)

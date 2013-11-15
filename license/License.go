@@ -4,6 +4,7 @@ package license
 import (
   "encoding/hex"
   "encoding/xml"
+  "fmt"
   "mas/crypto"
   "mas/logger"
   "io/ioutil"
@@ -23,6 +24,21 @@ type License struct {
 type Owner struct {
   FirstName string
   LastName string
+}
+
+
+func PrintLicenseInfos() {
+  license := []byte(_DecryptLicense())
+  var lic License
+  xml.Unmarshal(license, &lic)
+  expireDate, _ := time.Parse("2006-01-02 15:04", lic.Expired)
+  fmt.Println("--------------------------------------------------")
+  fmt.Println("--- LICENSE INFORMATIONS")
+  fmt.Println("--- OWNER: " + lic.Owner.FirstName + " " + lic.Owner.LastName)
+  fmt.Println("--- CREATION DATE: " + lic.Created)
+  fmt.Println("--- EXPIRATION DATE: " + lic.Expired)
+  fmt.Printf("--- LICENSE VALID: %t\n", expireDate.Sub(time.Now()) > 0)
+  fmt.Println("--------------------------------------------------")
 }
 
 

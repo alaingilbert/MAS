@@ -22,15 +22,18 @@
 
       L.CRS.Direct = L.Util.extend({}, L.CRS, {
         code: 'Direct',
-
         projection: L.Projection.NoWrap,
         transformation: new L.Transformation(1, 0, 1, 0)
       });
       var map = L.map('map', {
         worldCopyJump: false,
-        crs: L.CRS.Direct
+        crs: L.CRS.Direct,
+        zoom: 1,
+        minZoom: 1,
+        maxZoom: 1,
+        zoomControl: false
       }).setView([0, 0], 2);
-      L.tileLayer('http://127.0.0.1:8000/tile/?z={y}&x={x}&y={z}', {
+      L.tileLayer('/tile/?z={y}&x={x}&y={z}', {
         tileSize: 512,
         continuousWorld: true
       }).addTo(map);
