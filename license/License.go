@@ -28,9 +28,10 @@ type Owner struct {
 
 
 func PrintLicenseInfos() {
-  license := []byte(_DecryptLicense())
+  license, _ := _DecryptLicense()
+  licenseBytes := []byte(license)
   var lic License
-  xml.Unmarshal(license, &lic)
+  xml.Unmarshal(licenseBytes, &lic)
   expireDate, _ := time.Parse("2006-01-02 15:04", lic.Expired)
   fmt.Println("--------------------------------------------------")
   fmt.Println("--- LICENSE INFORMATIONS")
@@ -44,9 +45,13 @@ func PrintLicenseInfos() {
 
 // Verify will tell you if the license file is valid and not expired.
 func Verify() bool {
-  license := []byte(_DecryptLicense())
+  license, err := _DecryptLicense()
+  if err != nil {
+    return false
+  }
+  licenseBytes := []byte(license)
   var lic License
-  xml.Unmarshal(license, &lic)
+  xml.Unmarshal(licenseBytes, &lic)
   expireDate, _ := time.Parse("2006-01-02 15:04", lic.Expired)
   isValid := expireDate.Sub(time.Now()) > 0
   return isValid
@@ -55,12 +60,15 @@ func Verify() bool {
 
 // _DecryptLicense decrypt the license.key file.
 // It returns the license xml string.
-func _DecryptLicense() string {
-  file, _ := ioutil.ReadFile("license.key")
+func _DecryptLicense() (string, error) {
+  file, err := ioutil.ReadFile("license.key")
+  if err != nil {
+    return "", err
+  }
   fileStr := strings.TrimSpace(string(file))
   fileStr = strings.Replace(fileStr, "\n", "", -1)
   d, _ := hex.DecodeString(fileStr)
   key := []byte("pd$5fK40sL!S?p048sCXmQ9%Z*oPa&ey")
   license := crypto.Decrypt(key, d)
-  return license
+  return license, nil
 }
