@@ -8,6 +8,7 @@ import (
   "image/color"
   "mas/core"
   "mas/logger"
+  "math"
   "os"
 )
 
@@ -40,6 +41,69 @@ func FillRect(p_Img *image.RGBA, p_X, p_Z, p_Width, p_Height int, p_Color color.
       p_Img.Set(i, j, p_Color)
     }
   }
+}
+
+
+func GetRegionFromXYZ(x, y, z int) (int, int) {
+  var regionX int = int(math.Floor(float64(x) / (math.Pow(2, float64(z)))))
+  var regionZ int = int(math.Floor(float64(y) / (math.Pow(2, float64(z)))))
+  return regionX, regionZ
+}
+
+
+func StartingChunk(x, z int) int {
+  return x * int(32 / math.Pow(2, float64(z)))
+}
+
+
+func NbChunk(z int) int {
+  return int(32 / math.Pow(2, float64(z)))
+}
+
+
+func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *image.RGBA {
+  blockSize := 1
+  chunkSize := 16 * blockSize
+  regionX, regionZ := GetRegionFromXYZ(x, y, z)
+  startingChunkX := StartingChunk(x, z)
+  startingChunkZ := StartingChunk(y, z)
+  nbChunk := NbChunk(z)
+  scale := GetScale(z)
+
+  img := CreateImage(256, 256)
+  region := p_World.RegionManager().GetRegion(regionX, regionZ)
+  for chunkX := startingChunkX; chunkX < startingChunkX + nbChunk; chunkX++ {
+    for chunkZ := startingChunkZ; chunkZ < startingChunkZ + nbChunk; chunkZ++ {
+      chunk := region.GetChunk(chunkX, chunkZ)
+      if chunk == nil {
+        continue
+      }
+
+      heightmap := chunk.HeightMap()
+
+      for block := 0; block < 256; block++ {
+        chunkY := uint8(heightmap[block])
+        blockX := block % 16
+        blockZ := block / 16
+        blockId := chunk.BlockId(blockX, int(chunkY), blockZ)
+        c := p_Theme[blockId]
+        c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
+
+        FillRect(img,
+                 block % 16 + chunkX * chunkSize * scale,
+                 block / 16 + chunkZ * chunkSize * scale,
+                 blockSize * scale,
+                 blockSize * scale,
+                 c2)
+      }
+    }
+  }
+  return img
+}
+
+
+func GetScale(z int) int {
+  return int(math.Pow(2, float64((z - 1))))
 }
 
 
