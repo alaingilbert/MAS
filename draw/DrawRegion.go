@@ -21,8 +21,9 @@ func CreateImage(p_SizeX, p_SizeZ int) *image.RGBA {
 }
 
 
-func Save(p_FileName string, p_Img *image.RGBA) {
-  file, err := os.Create(p_FileName)
+func Save(p_Path, p_FileName string, p_Img *image.RGBA) {
+  os.MkdirAll(p_Path, 0700)
+  file, err := os.Create(p_Path + "" + p_FileName)
   if err != nil {
     fmt.Print(err)
   }
@@ -72,8 +73,6 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
   startingChunkZ := StartingChunk(y, z)
   nbChunk := NbChunk(z)
   scale := GetScale(z)
-
-  s_Logger.Debug(x, y, regionX, regionZ, startingChunkX, startingChunkZ, nbChunk, scale)
 
   img := CreateImage(256, 256)
   region := p_World.RegionManager().GetRegion(regionX, regionZ)

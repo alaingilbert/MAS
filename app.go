@@ -2,8 +2,6 @@ package main
 
 
 import (
-  //"mas/core"
-  //"mas/draw"
   "fmt"
   "image/png"
   "net/http"
@@ -34,12 +32,14 @@ func TileHandler(w http.ResponseWriter, req *http.Request) {
   x, _ := strconv.Atoi(req.URL.Query()["x"][0])
   y, _ := strconv.Atoi(req.URL.Query()["y"][0])
   z, _ := strconv.Atoi(req.URL.Query()["z"][0])
-  fileName := fmt.Sprintf("tiless/r.%s.%s.png", x ,z)
+  path := fmt.Sprintf("tiles/%d/%d/", z, x)
+  fileName := fmt.Sprintf("%d.png", y)
   s_Logger.Debug("Serve tile x:", x, "y:", y, "z:", z)
-  file, err := os.Open(fileName)
+  file, err := os.Open(path + fileName)
   if err != nil {
     img := draw.RenderTile(x, y, z, world, theme)
     png.Encode(w, img)
+    draw.Save(path, fileName, img)
     //http.NotFound(w, req)
     return
   }
