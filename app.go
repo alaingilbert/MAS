@@ -29,11 +29,10 @@ var m_LicenseValid bool = false
 const PORT int = 8000
 
 
-
-func TileHandler(w http.ResponseWriter, req *http.Request) {
-  x, _ := strconv.Atoi(req.URL.Query()["x"][0])
-  y, _ := strconv.Atoi(req.URL.Query()["y"][0])
-  z, _ := strconv.Atoi(req.URL.Query()["z"][0])
+func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params) {
+  x, _ := strconv.Atoi(params["x"])
+  y, _ := strconv.Atoi(params["y"])
+  z, _ := strconv.Atoi(params["z"])
   path := fmt.Sprintf("tiles/%d/%d/", z, x)
   fileName := fmt.Sprintf("%d.png", y)
   s_Logger.Debug("Serve tile x:", x, "y:", y, "z:", z)
@@ -119,7 +118,7 @@ func Server() {
   m.Use(martini.Static("static"))
   m.Use(LicenseMiddleware)
   m.Get("/", HomeHandler)
-  m.Get("/tile/", TileHandler)
+  m.Get("/tile/:z/:x/:y.png", TileHandler)
   m.Get("/license/", LicenseHandler)
   m.Run()
 }

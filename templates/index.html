@@ -33,7 +33,7 @@
         maxZoom: 5,
         zoomAnimation: false
       }).setView([1, 0], 1);
-      L.tileLayer('/tile/?z={z}&x={x}&y={y}', {
+      L.tileLayer('/tile/{z}/{x}/{y}.png', {
         tileSize: 256,
         continuousWorld: true
       }).addTo(map);
