@@ -10,12 +10,12 @@ import (
   "mas/license"
   "mas/logger"
   "mas/worker"
+  "io"
   "os"
   "runtime"
   "time"
   "strconv"
   "html/template"
-  "io/ioutil"
   "mas/draw"
 )
 
@@ -61,38 +61,54 @@ func HomeHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 
-func LeafletJsHandler(w http.ResponseWriter, req *http.Request) {
-  file, _ := ioutil.ReadFile("static/js/leaflet.js")
-  w.Header().Set("Content-Type", "application/x-javascript")
-  w.Write(file)
-}
-
-func LeafletCssHandler(w http.ResponseWriter, req *http.Request) {
-  file, _ := ioutil.ReadFile("static/css/leaflet.css")
-  w.Header().Set("Content-Type", "text/css")
-  w.Write(file)
-}
-
-func LeafletZoomInHandler(w http.ResponseWriter, req *http.Request) {
-  file, _ := ioutil.ReadFile("static/css/images/zoom-in.png")
-  w.Header().Set("Content-Type", "image/png")
-  w.Write(file)
-}
-
-func LeafletZoomOutHandler(w http.ResponseWriter, req *http.Request) {
-  file, _ := ioutil.ReadFile("static/css/images/zoom-out.png")
-  w.Header().Set("Content-Type", "image/png")
-  w.Write(file)
+func LicenseHandler(w http.ResponseWriter, req *http.Request) {
+  tmpl, err := template.ParseFiles("templates/license.html")
+  if err != nil {
+    fmt.Println(err)
+  }
+  licInfos, err := license.Infos()
+  context := map[string] string {
+    "title": "License",
+    "licenseCreated": licInfos["Created"],
+    "licenseExpired": licInfos["Expired"],
+    "licenseFirstName": licInfos["FirstName"],
+    "licenseLastName": licInfos["LastName"],
+  }
+  if err != nil {
+    context["licenseErr"] = err.Error()
+  }
+  tmpl.Execute(w, context)
 }
 
 
 func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
   if !m_LicenseValid {
-    tmpl, err := template.ParseFiles("templates/license.html")
-    if err != nil {
-      fmt.Println(err)
+    if req.Method == "POST" {
+      lic := req.PostFormValue("license")
+      file, err := os.Create("license.key")
+      if err != nil {
+        fmt.Println(err)
+      }
+      defer file.Close()
+      io.WriteString(file, lic)
+      m_LicenseValid = license.Verify()
+      http.Redirect(res, req, "/", 302)
+      return
     }
-    tmpl.Execute(res, map[string] string {"title": "Invalid License"})
+
+    licInfos, err := license.Infos()
+    context := map[string] string {
+      "title": "Invalid License",
+      "licenseCreated": licInfos["Created"],
+      "licenseExpired": licInfos["Expired"],
+      "licenseFirstName": licInfos["FirstName"],
+      "licenseLastName": licInfos["LastName"],
+    }
+    if err != nil {
+      context["licenseErr"] = err.Error()
+    }
+    tmpl, _ := template.ParseFiles("templates/license.html")
+    tmpl.Execute(res, context)
   }
 }
 
@@ -104,10 +120,7 @@ func Server() {
   m.Use(LicenseMiddleware)
   m.Get("/", HomeHandler)
   m.Get("/tile/", TileHandler)
-  //m.Get("/static/css/leaflet.css", LeafletCssHandler)
-  m.Get("/static/css/images/zoom-in.png", LeafletZoomInHandler)
-  m.Get("/static/css/images/zoom-out.png", LeafletZoomOutHandler)
-  //m.Get("/static/js/leaflet.js", LeafletJsHandler)
+  m.Get("/license/", LicenseHandler)
   m.Run()
 }
 

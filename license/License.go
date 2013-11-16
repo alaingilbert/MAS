@@ -2,6 +2,7 @@ package license
 
 
 import (
+  "errors"
   "encoding/hex"
   "encoding/xml"
   "fmt"
@@ -58,6 +59,23 @@ func Verify() bool {
 }
 
 
+func Infos() (map[string]string, error) {
+  license, err := _DecryptLicense()
+  if err != nil {
+    return nil, errors.New("License file invalid.")
+  }
+  licenseBytes := []byte(license)
+  var lic License
+  xml.Unmarshal(licenseBytes, &lic)
+  res := make(map[string]string)
+  res["Created"] = lic.Created
+  res["Expired"] = lic.Expired
+  res["FirstName"] = lic.Owner.FirstName
+  res["LastName"] = lic.Owner.LastName
+  return res, nil
+}
+
+
 // _DecryptLicense decrypt the license.key file.
 // It returns the license xml string.
 func _DecryptLicense() (string, error) {
@@ -69,6 +87,9 @@ func _DecryptLicense() (string, error) {
   fileStr = strings.Replace(fileStr, "\n", "", -1)
   d, _ := hex.DecodeString(fileStr)
   key := []byte("pd$5fK40sL!S?p048sCXmQ9%Z*oPa&ey")
-  license := crypto.Decrypt(key, d)
+  license, err := crypto.Decrypt(key, d)
+  if err != nil {
+    return "", err
+  }
   return license, nil
 }

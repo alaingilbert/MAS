@@ -2,6 +2,7 @@ package crypto
 
 
 import (
+  "fmt"
   "crypto/aes"
   "crypto/cipher"
   "crypto/rand"
@@ -41,17 +42,17 @@ func Encrypt(key, text []byte) []byte {
 }
 
 
-func Decrypt(key, text []byte) string {
+func Decrypt(key, text []byte) (string, error) {
   block, err := aes.NewCipher(key)
   if err != nil {
     panic(err)
   }
   if len(text) < aes.BlockSize {
-    panic("ciphertext too short")
+    return "", fmt.Errorf("ciphertext too short")
   }
   iv := text[:aes.BlockSize]
   text = text[aes.BlockSize:]
   cfb := cipher.NewCFBDecrypter(block, iv)
   cfb.XORKeyStream(text, text)
-  return string(decodeBase64(string(text)))
+  return string(decodeBase64(string(text))), nil
 }
