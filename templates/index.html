@@ -3,13 +3,34 @@
   <head>
     <title>{{.title}}</title>
     <link rel="stylesheet" href="/css/leaflet.css" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <script src="/js/jquery.min.js"></script>
     <script src="/js/leaflet.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <style>
       html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+      #map {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
     </style>
   </head>
   <body>
-    <div id="map" style="width: 100%; height: 100%"></div>
+    <div style="height: 100%">
+      <div class="col-md-2">
+        <div class="players">
+          <div class="btn btn-default" id="maze">Maze</div><br />
+          <div class="btn btn-default" id="newYork">New York</div>
+        </div>
+        <div id="coords">x: 0, z: 0</div>
+      </div>
+      <div class="col-md-10" style="height: 100%">
+        <div id="map"></div>
+      </div>
+    </div>
     <script>
       L.Projection.NoWrap = {
         project: function (latlng) {
@@ -25,6 +46,7 @@
         projection: L.Projection.NoWrap,
         transformation: new L.Transformation(1, 0, 1, 0)
       });
+
       var map = L.map('map', {
         worldCopyJump: false,
         crs: L.CRS.Direct,
@@ -38,21 +60,32 @@
         continuousWorld: true
       }).addTo(map);
 
-      // Alain
-      var alainX = -91 / (32*16);
-      var alainZ = 485 / (32*16);
+      map.on('mousemove', function(e) {
+        var y = e.latlng.lat * 16*32;
+        var x = e.latlng.lng * 16*32;
+        $("#coords").text("x: " + x + ", z: " + y);
+      });
 
-      // Map
-      var mapX = -18 / (32*16);
-      var mapZ = 559 / (32*16);
+      $("#maze").click(function() { map.setView([453/512, 224/512], 3); });
+      $("#newYork").click(function() { map.setView([772/512, 2060/512], 2); });
 
-      // Jo
-      var x = -159 / (32*16);
-      var z = 571 / (32*16);
-      new L.Marker(new L.LatLng(z, x, true)).addTo(map);
-      new L.Marker(new L.LatLng(780 / (32*16), 1964 / (32 * 16), true)).addTo(map);
-      new L.Marker(new L.LatLng(mapZ, mapX, true)).addTo(map);
-      new L.Marker(new L.LatLng(alainZ, alainX, true)).addTo(map);
+      var players = {};
+
+      var GetPlayersPositions = function() {
+        $.get("/api/players/", function(data) {
+          $.each(data, function (index, player) {
+            if (players[player.Name] == null) {
+              players[player.Name] = new L.Marker(new L.LatLng(player.Z/(16*32), player.X/(32*16), true)).bindPopup(player.Name).addTo(map);
+            } else {
+              players[player.Name].setLatLng(new L.LatLng(player.Z/(16*32), player.X/(32*16), true));
+            }
+          });
+        }, "json");
+      };
+
+      GetPlayersPositions();
+
+      setInterval(GetPlayersPositions, 10000);
     </script>
   </body>
 </html>

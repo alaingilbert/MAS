@@ -19,6 +19,17 @@ type Player struct {
 }
 
 
+type PlayerJson struct {
+  Name string
+  X, Y, Z float64
+}
+
+
+func (p *Player) ToJson() PlayerJson {
+  return PlayerJson{p.m_Name, p.m_X, p.m_Y, p.m_Z}
+}
+
+
 func NewPlayer(p_PlayerManager *PlayerManager, p_Name string) *Player {
   player := Player{}
   player.m_PlayerManager = p_PlayerManager

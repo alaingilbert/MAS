@@ -25,6 +25,9 @@ func NewPlayerManager(p_WorldPath string) *PlayerManager {
 
 func (p *PlayerManager) GetPlayers() []*Player {
   var players []*Player
+  for _, name := range p.PlayerNames() {
+    players = append(players, p.GetPlayer(name))
+  }
   return players
 }
 
@@ -44,7 +47,7 @@ func (p *PlayerManager) PlayerNames() []string {
     if !strings.HasSuffix(file, "dat") {
       continue
     }
-    file = strings.TrimRight(file, ".dat")
+    file = strings.TrimSuffix(file, ".dat")
     newFiles = append(newFiles, file)
   }
   return newFiles

@@ -17,6 +17,7 @@ import (
   "strconv"
   "html/template"
   "mas/draw"
+  "encoding/json"
 )
 
 
@@ -113,8 +114,13 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
 
 func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
   players := world.PlayerManager().GetPlayers()
-  fmt.Println(players)
-  io.WriteString(res, "TMP")
+  var playersJson []core.PlayerJson
+  for _, player := range players {
+    playerJson := player.ToJson()
+    playersJson = append(playersJson, playerJson)
+  }
+  b, _ := json.Marshal(playersJson)
+  res.Write(b)
 }
 
 
