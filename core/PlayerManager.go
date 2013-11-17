@@ -2,6 +2,9 @@ package core
 
 
 import (
+  "os"
+  "path"
+  "strings"
 )
 
 
@@ -20,12 +23,29 @@ func NewPlayerManager(p_WorldPath string) *PlayerManager {
 }
 
 
+func (p *PlayerManager) GetPlayers() []*Player {
+  var players []*Player
+  return players
+}
+
+
 func (p *PlayerManager) GetPlayer(p_Name string) *Player {
-  return NewPlayer()
+  player := NewPlayer(p, p_Name).Player()
+  return player
 }
 
 
 func (p *PlayerManager) PlayerNames() []string {
-  var players []string
-  return players
+  playersDir, _ := os.Open(path.Join(p.m_WorldPath, PLAYER_DIR))
+  defer playersDir.Close()
+  var newFiles []string
+  files, _ := playersDir.Readdirnames(0)
+  for _, file := range files {
+    if !strings.HasSuffix(file, "dat") {
+      continue
+    }
+    file = strings.TrimRight(file, ".dat")
+    newFiles = append(newFiles, file)
+  }
+  return newFiles
 }

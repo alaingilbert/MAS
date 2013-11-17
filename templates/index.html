@@ -37,6 +37,22 @@
         tileSize: 256,
         continuousWorld: true
       }).addTo(map);
+
+      // Alain
+      var alainX = -91 / (32*16);
+      var alainZ = 485 / (32*16);
+
+      // Map
+      var mapX = -18 / (32*16);
+      var mapZ = 559 / (32*16);
+
+      // Jo
+      var x = -159 / (32*16);
+      var z = 571 / (32*16);
+      new L.Marker(new L.LatLng(z, x, true)).addTo(map);
+      new L.Marker(new L.LatLng(780 / (32*16), 1964 / (32 * 16), true)).addTo(map);
+      new L.Marker(new L.LatLng(mapZ, mapX, true)).addTo(map);
+      new L.Marker(new L.LatLng(alainZ, alainX, true)).addTo(map);
     </script>
   </body>
 </html>

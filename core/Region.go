@@ -103,11 +103,6 @@ func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
       buf := new(bytes.Buffer)
       buf.ReadFrom(reader)
       s := buf.String()
-      defer func () {
-        if r := recover(); r != nil {
-          fmt.Println(s)
-        }
-      }()
       re := strings.NewReader(s)
       tree.Init(re)
       chunk := NewChunk(p_LocalX, p_LocalZ)

@@ -9,7 +9,7 @@ import (
   "mas/core"
   "mas/license"
   "mas/logger"
-  "mas/worker"
+  //"mas/worker"
   "io"
   "os"
   "runtime"
@@ -35,7 +35,6 @@ func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params
   z, _ := strconv.Atoi(params["z"])
   path := fmt.Sprintf("tiles/%d/%d/", z, x)
   fileName := fmt.Sprintf("%d.png", y)
-  s_Logger.Debug("Serve tile x:", x, "y:", y, "z:", z)
   file, err := os.Open(path + fileName)
   if err != nil {
     img := draw.RenderTile(x, y, z, world, theme)
@@ -112,6 +111,13 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
 }
 
 
+func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
+  players := world.PlayerManager().GetPlayers()
+  fmt.Println(players)
+  io.WriteString(res, "TMP")
+}
+
+
 func Server() {
   s_Logger.Debug("Start web server")
   m := martini.Classic()
@@ -120,6 +126,7 @@ func Server() {
   m.Get("/", HomeHandler)
   m.Get("/tile/:z/:x/:y.png", TileHandler)
   m.Get("/license/", LicenseHandler)
+  m.Get("/api/players/", ApiPlayersHandler)
   m.Run()
 }
 
@@ -145,14 +152,14 @@ func main() {
   isLicenseValid := license.Verify()
   m_LicenseValid = isLicenseValid
   license.PrintLicenseInfos()
-  if !isLicenseValid {
-    s_Logger.Error("License expired.")
-  }
 
   s_Logger.Debug("Start")
 
+  player := world.PlayerManager().GetPlayer("alaingilbert")
+  s_Logger.Debug(player.X(), player.Y(), player.Z())
+
   // Create worker pool
-  workerPool := worker.NewWorkerPool(numCPU)
+  //workerPool := worker.NewWorkerPool(numCPU)
 
   // start webserver
   Server()
@@ -170,7 +177,7 @@ func main() {
   //  workerPool.Do(job)
   //}
 
-  workerPool.Wait()
+  //workerPool.Wait()
 
   //s_Logger.Debug("End", time.Since(startTime))
 }
