@@ -73,6 +73,7 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
   startingChunkZ := StartingChunk(y, z)
   nbChunk := NbChunk(z)
   scale := GetScale(z)
+  skip := BlockToSkip(z)
 
   img := CreateImage(256, 256)
   region := p_World.RegionManager().GetRegion(regionX, regionZ)
@@ -85,7 +86,7 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
 
       heightmap := chunk.HeightMap()
 
-      for block := 0; block < 256; block++ {
+      for block := 0; block < 256; block += skip {
         chunkY := uint8(heightmap[block])
         blockX := block % 16
         blockZ := block / 16
@@ -94,8 +95,8 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
         c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
 
         FillRect(img,
-                 (block % 16 + (chunkX-startingChunkX) * chunkSize) * scale,
-                 (block / 16 + (chunkZ-startingChunkZ) * chunkSize) * scale,
+                 (block % 16 + (chunkX-startingChunkX) * chunkSize) * scale / skip,
+                 (block / 16 + (chunkZ-startingChunkZ) * chunkSize) * scale / skip,
                  blockSize * scale,
                  blockSize * scale,
                  c2)
@@ -106,7 +107,17 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
 }
 
 
+func BlockToSkip(z int) int {
+ if z == 0 {
+  return 2
+ } else {
+  return 1
+ }
+}
+
+
 func GetScale(z int) int {
+  if z == 0 { return 1 }
   return int(math.Pow(2, float64((z - 1))))
 }
 

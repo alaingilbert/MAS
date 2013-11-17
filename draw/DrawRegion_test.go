@@ -5,7 +5,14 @@ import (
 )
 
 func TestDrawtile(t *testing.T) {
-  regionX, regionZ := GetRegionFromXYZ(0, 0, 1)
+  regionX, regionZ := GetRegionFromXYZ(0, 0, 0)
+  if regionX != 0 || regionZ != 0 { t.Fail() }
+  regionX, regionZ = GetRegionFromXYZ(1, 0, 0)
+  if regionX != 1 || regionZ != 0 { t.Fail() }
+  regionX, regionZ = GetRegionFromXYZ(2, 0, 0)
+  if regionX != 2 || regionZ != 0 { t.Fail() }
+
+  regionX, regionZ = GetRegionFromXYZ(0, 0, 1)
   if regionX != 0 || regionZ != 0 { t.Fail() }
   regionX, regionZ = GetRegionFromXYZ(1, 0, 1)
   if regionX != 0 || regionZ != 0 { t.Fail() }
@@ -49,7 +56,16 @@ func TestDrawtile(t *testing.T) {
 
 
 func TestStartingChunk(t *testing.T) {
-  chunk := StartingChunk(-2, 1)
+  chunk := StartingChunk(-1, 0)
+  if chunk != 0 { t.Fatal(chunk) }
+  chunk = StartingChunk(0, 0)
+  if chunk != 0 { t.Fatal(chunk) }
+  chunk = StartingChunk(1, 0)
+  if chunk != 0 { t.Fatal(chunk) }
+  chunk = StartingChunk(2, 0)
+  if chunk != 0 { t.Fatal(chunk) }
+
+  chunk = StartingChunk(-2, 1)
   if chunk != 0 { t.Fatal(chunk) }
   chunk = StartingChunk(-1, 1)
   if chunk != 16 { t.Fatal(chunk) }
@@ -99,7 +115,9 @@ func TestStartingChunk(t *testing.T) {
 
 
 func TestNbChunk(t *testing.T) {
-  nbChunk := NbChunk(1)
+  nbChunk := NbChunk(0)
+  if nbChunk != 32 { t.Fail() }
+  nbChunk = NbChunk(1)
   if nbChunk != 16 { t.Fail() }
   nbChunk = NbChunk(2)
   if nbChunk != 8 { t.Fail() }
@@ -109,7 +127,9 @@ func TestNbChunk(t *testing.T) {
 
 
 func TestGetScale(t *testing.T) {
-  scale := GetScale(1)
+  scale := GetScale(0)
+  if scale != 1 { t.Fail() }
+  scale = GetScale(1)
   if scale != 1 { t.Fail() }
   scale = GetScale(2)
   if scale != 2 { t.Fail() }
@@ -121,9 +141,14 @@ func TestGetScale(t *testing.T) {
 
 
 func TestSize(t *testing.T) {
-  z := 1
+  z := 0
   scale := GetScale(z)
   nbChunk := NbChunk(z)
+  if nbChunk * 8 * scale != 256  { t.Fail() }
+
+  z = 1
+  scale = GetScale(z)
+  nbChunk = NbChunk(z)
   if nbChunk * 16 * scale != 256  { t.Fail() }
 
   z = 2
@@ -140,4 +165,19 @@ func TestSize(t *testing.T) {
   scale = GetScale(z)
   nbChunk = NbChunk(z)
   if nbChunk * 16 * scale != 256  { t.Fail() }
+}
+
+
+func TestBlockToSkip(t *testing.T) {
+  skip := BlockToSkip(0)
+  if skip != 2 { t.Fail() }
+
+  skip = BlockToSkip(1)
+  if skip != 1 { t.Fail() }
+
+  skip = BlockToSkip(2)
+  if skip != 1 { t.Fail() }
+
+  skip = BlockToSkip(3)
+  if skip != 1 { t.Fail() }
 }
