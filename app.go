@@ -174,6 +174,24 @@ func LicenseVerifier() {
 }
 
 
+func CreateSettingsFile() {
+  file, _ := os.Create("settings.xml")
+  defer file.Close()
+  content := `<?xml version="1.0" encoding="UTF-8" ?>
+<Settings>
+  <Theme>default</Theme>
+  <WorldPath>/Path/To/world</WorldPath>
+  <NbtVersion>Anvil</NbtVersion>
+
+  <WebServer>
+    <Host>127.0.0.1</Host>
+    <Port>81</Port>
+  </WebServer>
+</Settings>`
+  file.Write([]byte(content))
+}
+
+
 func main() {
   numCPU := runtime.NumCPU()
   runtime.GOMAXPROCS(numCPU)
@@ -186,6 +204,10 @@ func main() {
   license.PrintLicenseInfos()
 
   // Load settings
+  _, err := os.Stat("settings.xml")
+  if err != nil {
+    CreateSettingsFile()
+  }
   settingsFile, _ := ioutil.ReadFile("settings.xml")
   var settings Settings
   xml.Unmarshal(settingsFile, &settings)
