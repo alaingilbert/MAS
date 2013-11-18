@@ -6,6 +6,6 @@
 
   <WebServer>
     <Host>127.0.0.1</Host>
-    <Port>8000</Port>
+    <Port>81</Port>
   </WebServer>
 </Settings>

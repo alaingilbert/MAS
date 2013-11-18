@@ -11,6 +11,7 @@ import (
   "mas/logger"
   //"mas/worker"
   "io"
+  "io/ioutil"
   "os"
   "runtime"
   "time"
@@ -18,17 +19,29 @@ import (
   "html/template"
   "mas/draw"
   "encoding/json"
+  "encoding/xml"
 )
+
+
+type Settings struct {
+  Theme string
+  WorldPath string
+  NbtVersion string
+  WebServer WebServer
+}
+
+type WebServer struct {
+  Host string
+  Port int
+}
 
 
 var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
-var world *core.World = core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
+var m_World *core.World
+var m_Settings Settings
 var theme map[byte]core.Block = core.LoadTheme("default")
 var m_LicenseValid bool = false
-
-const PORT int = 8000
-
 
 func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params) {
   x, _ := strconv.Atoi(params["x"])
@@ -38,7 +51,7 @@ func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params
   fileName := fmt.Sprintf("%d.png", y)
   file, err := os.Open(path + fileName)
   if err != nil {
-    img := draw.RenderTile(x, y, z, world, theme)
+    img := draw.RenderTile(x, y, z, m_World, theme)
     png.Encode(w, img)
     draw.Save(path, fileName, img)
     //http.NotFound(w, req)
@@ -113,7 +126,7 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
 
 
 func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
-  players := world.PlayerManager().GetPlayers()
+  players := m_World.PlayerManager().GetPlayers()
   var playersJson []core.PlayerJson
   for _, player := range players {
     playerJson := player.ToJson()
@@ -133,7 +146,7 @@ func Server() {
   m.Get("/tile/:z/:x/:y.png", TileHandler)
   m.Get("/license/", LicenseHandler)
   m.Get("/api/players/", ApiPlayersHandler)
-  m.Run()
+  http.ListenAndServe(fmt.Sprintf(":%d", m_Settings.WebServer.Port) , m)
 }
 
 
@@ -161,7 +174,14 @@ func main() {
 
   s_Logger.Debug("Start")
 
-  player := world.PlayerManager().GetPlayer("alaingilbert")
+  settingsFile, _ := ioutil.ReadFile("settings.xml")
+  var settings Settings
+  xml.Unmarshal(settingsFile, &settings)
+  m_Settings = settings
+  s_Logger.Debug(settings.WorldPath)
+  m_World = core.NewWorld(settings.WorldPath)
+
+  player := m_World.PlayerManager().GetPlayer("alaingilbert")
   s_Logger.Debug(player.X(), player.Y(), player.Z())
 
   // Create worker pool
