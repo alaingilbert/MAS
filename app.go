@@ -52,9 +52,12 @@ func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params
   file, err := os.Open(path + fileName)
   if err != nil {
     img := draw.RenderTile(x, y, z, m_World, theme)
+    if img == nil {
+      http.NotFound(w, req)
+      return
+    }
     png.Encode(w, img)
     draw.Save(path, fileName, img)
-    //http.NotFound(w, req)
     return
   }
   defer file.Close()
@@ -150,60 +153,36 @@ func Server() {
 }
 
 
+func LicenseVerifier() {
+  c := time.Tick(1 * time.Hour)
+  for now := range c {
+    isLicenseValid := license.Verify()
+    if !isLicenseValid {
+      s_Logger.Error("License expired.", now)
+      os.Exit(0)
+    }
+  }
+}
+
+
 func main() {
   numCPU := runtime.NumCPU()
   runtime.GOMAXPROCS(numCPU)
 
-  go func () {
-    c := time.Tick(1 * time.Hour)
-    for now := range c {
-      isLicenseValid := license.Verify()
-      if !isLicenseValid {
-        s_Logger.Error("License expired.", now)
-        os.Exit(0)
-      }
-    }
-  }()
-
-  // Load settings
+  go LicenseVerifier()
 
   // Load license
   isLicenseValid := license.Verify()
   m_LicenseValid = isLicenseValid
   license.PrintLicenseInfos()
 
-  s_Logger.Debug("Start")
-
+  // Load settings
   settingsFile, _ := ioutil.ReadFile("settings.xml")
   var settings Settings
   xml.Unmarshal(settingsFile, &settings)
   m_Settings = settings
-  s_Logger.Debug(settings.WorldPath)
   m_World = core.NewWorld(settings.WorldPath)
-
-  player := m_World.PlayerManager().GetPlayer("alaingilbert")
-  s_Logger.Debug(player.X(), player.Y(), player.Z())
-
-  // Create worker pool
-  //workerPool := worker.NewWorkerPool(numCPU)
 
   // start webserver
   Server()
-
-  //startTime := time.Now()
-  //world := core.NewWorld("/Users/agilbert/Desktop/minecraft/world")
-  //theme := core.LoadTheme("default")
-
-  //regionsCoordinates := world.RegionManager().RegionsCoordinates()
-  //for index, regionCoord := range regionsCoordinates {
-  //  if index > 0 {
-  //    //break
-  //  }
-  //  job := draw.NewJobRenderRegionTile(regionCoord[0], regionCoord[1], world, theme)
-  //  workerPool.Do(job)
-  //}
-
-  //workerPool.Wait()
-
-  //s_Logger.Debug("End", time.Since(startTime))
 }

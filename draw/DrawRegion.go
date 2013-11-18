@@ -75,8 +75,11 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
   scale := GetScale(z)
   skip := BlockToSkip(z)
 
-  img := CreateImage(256, 256)
   region := p_World.RegionManager().GetRegion(regionX, regionZ)
+  if !region.Exists() {
+    return nil
+  }
+  img := CreateImage(256, 256)
   for chunkX := startingChunkX; chunkX < startingChunkX + nbChunk; chunkX++ {
     for chunkZ := startingChunkZ; chunkZ < startingChunkZ + nbChunk; chunkZ++ {
       chunk := region.GetChunk(chunkX, chunkZ)
