@@ -128,6 +128,14 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
 }
 
 
+func ThemeHandler(res http.ResponseWriter, req *http.Request) {
+  context := map[string] string {
+  }
+  tmpl, _ := template.ParseFiles("templates/theme.html")
+  tmpl.Execute(res, context)
+}
+
+
 func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
   players := m_World.PlayerManager().GetPlayers()
   var playersJson []core.PlayerJson
@@ -148,6 +156,7 @@ func Server() {
   m.Get("/", HomeHandler)
   m.Get("/tile/:z/:x/:y.png", TileHandler)
   m.Get("/license/", LicenseHandler)
+  m.Get("/theme/", ThemeHandler)
   m.Get("/api/players/", ApiPlayersHandler)
   http.ListenAndServe(fmt.Sprintf(":%d", m_Settings.WebServer.Port) , m)
 }
