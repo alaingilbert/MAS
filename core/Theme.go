@@ -23,7 +23,7 @@ type Block struct {
 
 func LoadTheme(p_Theme string) map[byte]Block {
   s_Logger.Debug("Load xml theme")
-  xmlFile, err := os.Open("./themes/default/theme.xml")
+  xmlFile, err := os.Open("./public/themes/default/theme.xml")
   if err != nil {
     s_Logger.Fatal("Cant load theme file")
   }
