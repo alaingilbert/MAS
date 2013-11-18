@@ -33,7 +33,18 @@ func NewRegion(p_RegionManager *RegionManager, p_X, p_Z int) *Region {
   region.m_RegionManager = p_RegionManager
   region.m_X = p_X
   region.m_Z = p_Z
+  file, err := os.Open(path.Join(region.FilePath(), region.FileName()))
+  if err != nil {
+    log.Println(err)
+    return nil
+  }
+  region.m_File = file
   return &region
+}
+
+
+func (r *Region) Dispose() {
+  r.m_File.Close()
 }
 
 
@@ -65,34 +76,27 @@ func (r *Region) Exists() bool {
 // p_LocalZ Z position of the chunk in the region.
 // It returns a pointer to the chunk.
 func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
-  file, err := os.Open(path.Join(r.FilePath(), r.FileName()))
-  if err != nil {
-    log.Println(err)
-    return nil
-  }
-  defer file.Close()
-
   location := r.chunkCoordinate(p_LocalX, p_LocalZ)
-  file.Seek(int64(location), 0)
+  r.m_File.Seek(int64(location), 0)
   offsetBytes := make([]byte, 3)
   var offset int64
-  file.Read(offsetBytes)
+  r.m_File.Read(offsetBytes)
   for _, value := range offsetBytes {
     offset = offset << 8 + int64(value)
   }
 
   if offset > 0 {
-    file.Seek(offset * 4096, 0)
+    r.m_File.Seek(offset * 4096, 0)
     lengthBytes := make([]byte, 4)
-    file.Read(lengthBytes)
+    r.m_File.Read(lengthBytes)
     var length int64
     for _, value := range lengthBytes { length = length << 8 + int64(value) }
     versionByte := make([]byte, 1)
-    file.Read(versionByte)
+    r.m_File.Read(versionByte)
     version := int(versionByte[0])
     if version == 2 {
       compress := make([]byte, length - 1)
-      file.Read(compress)
+      r.m_File.Read(compress)
       reader, err := zlib.NewReader(bytes.NewReader(compress))
       if err != nil {
         log.Fatal(err)

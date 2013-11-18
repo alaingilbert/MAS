@@ -106,6 +106,7 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
       }
     }
   }
+  region.Dispose()
   return img
 }
 
