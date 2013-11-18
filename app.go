@@ -68,7 +68,7 @@ func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params
 
 
 func HomeHandler(w http.ResponseWriter, req *http.Request) {
-  tmpl, err := template.ParseFiles("templates/index.html")
+  tmpl, err := template.ParseFiles("public/templates/index.html")
   if err != nil {
     fmt.Println(err)
   }
@@ -77,7 +77,7 @@ func HomeHandler(w http.ResponseWriter, req *http.Request) {
 
 
 func LicenseHandler(w http.ResponseWriter, req *http.Request) {
-  tmpl, err := template.ParseFiles("templates/license.html")
+  tmpl, err := template.ParseFiles("public/templates/license.html")
   if err != nil {
     fmt.Println(err)
   }
@@ -122,7 +122,7 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
     if err != nil {
       context["licenseErr"] = err.Error()
     }
-    tmpl, _ := template.ParseFiles("templates/license.html")
+    tmpl, _ := template.ParseFiles("public/templates/license.html")
     tmpl.Execute(res, context)
   }
 }
@@ -131,7 +131,7 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
 func ThemeHandler(res http.ResponseWriter, req *http.Request) {
   context := map[string] string {
   }
-  tmpl, _ := template.ParseFiles("templates/theme.html")
+  tmpl, _ := template.ParseFiles("public/templates/theme.html")
   tmpl.Execute(res, context)
 }
 
@@ -151,7 +151,7 @@ func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
 func Server() {
   s_Logger.Debug("Start web server")
   m := martini.Classic()
-  m.Use(martini.Static("static"))
+  m.Use(martini.Static("public/static"))
   m.Use(LicenseMiddleware)
   m.Get("/", HomeHandler)
   m.Get("/tile/:z/:x/:y.png", TileHandler)
