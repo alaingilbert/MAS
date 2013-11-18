@@ -42,6 +42,7 @@ var m_World *core.World
 var m_Settings Settings
 var theme map[byte]core.Block = core.LoadTheme("default")
 var m_LicenseValid bool = false
+var m_WorldPathValid = true
 
 func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params) {
   x, _ := strconv.Atoi(params["x"])
@@ -97,6 +98,10 @@ func LicenseHandler(w http.ResponseWriter, req *http.Request) {
 
 
 func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
+  if !m_WorldPathValid {
+    io.WriteString(res, "World path invalid. Change your settings.xml")
+    return
+  }
   if !m_LicenseValid {
     if req.Method == "POST" {
       lic := req.PostFormValue("license")
@@ -185,7 +190,7 @@ func CreateSettingsFile() {
 
   <WebServer>
     <Host>127.0.0.1</Host>
-    <Port>81</Port>
+    <Port>8000</Port>
   </WebServer>
 </Settings>`
   file.Write([]byte(content))
@@ -212,6 +217,12 @@ func main() {
   var settings Settings
   xml.Unmarshal(settingsFile, &settings)
   m_Settings = settings
+
+  _, err = os.Stat(settings.WorldPath)
+  if err != nil {
+    m_WorldPathValid = false
+  }
+
   m_World = core.NewWorld(settings.WorldPath)
 
   // start webserver
