@@ -153,6 +153,11 @@ func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
 }
 
 
+func RenewTilesHandler(res http.ResponseWriter, req *http.Request) {
+  os.RemoveAll("./tiles/")
+}
+
+
 func Server() {
   s_Logger.Debug("Start web server")
   m := martini.Classic()
@@ -163,6 +168,7 @@ func Server() {
   m.Get("/license/", LicenseHandler)
   m.Get("/theme/", ThemeHandler)
   m.Get("/api/players/", ApiPlayersHandler)
+  m.Get("/renewtiles/", RenewTilesHandler)
   http.ListenAndServe(fmt.Sprintf(":%d", m_Settings.WebServer.Port) , m)
 }
 
