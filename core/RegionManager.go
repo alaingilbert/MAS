@@ -30,14 +30,19 @@ func NewRegionManager(p_RegionPath string) *RegionManager {
 
 
 // GetRegion get a specific region.
-// p_X coordinate of the region on the X axis.
-// p_Z coordinate of the region on the Z axis.
+// p_RegionX coordinate of the region on the X axis.
+// p_RegionZ coordinate of the region on the Z axis.
 // It returns a pointer to a region.
-func (r *RegionManager) GetRegion(p_X, p_Z int) *Region {
-  return NewRegion(r, p_X, p_Z)
+func (r *RegionManager) GetRegion(p_RegionX, p_RegionZ int) *Region {
+  return NewRegion(r, p_RegionX, p_RegionZ)
 }
 
 
+// GetRegionFromXYZ get a specific region from a global world coordinate.
+// p_X x world coordinate.
+// p_Y y world coordinate.
+// p_Z z world coordinate.
+// It returns a pointer to a region.
 func (r *RegionManager) GetRegionFromXYZ(p_X, p_Y, p_Z int) *Region {
   return NewRegionFromXYZ(r, p_X, p_Y, p_Z)
 }
