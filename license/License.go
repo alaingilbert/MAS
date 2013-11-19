@@ -47,6 +47,14 @@ func PrintLicenseInfos() {
 var IsValid bool = false
 
 
+func LicenseVerifier() {
+  c := time.Tick(1 * time.Second)
+  for _ = range c {
+    Verify()
+  }
+}
+
+
 // Verify will tell you if the license file is valid and not expired.
 func Verify() bool {
   license, err := _DecryptLicense()

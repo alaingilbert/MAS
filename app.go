@@ -11,34 +11,20 @@ import (
   "mas/license"
   "mas/logger"
   "net/http"
-  "os"
   "runtime"
-  "time"
 )
 
 
 var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
 
-func LicenseVerifier() {
-  c := time.Tick(1 * time.Hour)
-  for now := range c {
-    if !license.Verify() {
-      s_Logger.Error("License expired.", now)
-      os.Exit(0)
-    }
-  }
-}
-
-
 func main() {
   numCPU := runtime.NumCPU()
   runtime.GOMAXPROCS(numCPU)
 
-  license.Verify()
-  go LicenseVerifier()
-
   // Load license
+  license.Verify()
+  go license.LicenseVerifier()
   license.PrintLicenseInfos()
 
   // Load settings
