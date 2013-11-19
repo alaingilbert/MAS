@@ -44,6 +44,9 @@ func PrintLicenseInfos() {
 }
 
 
+var IsValid bool = false
+
+
 // Verify will tell you if the license file is valid and not expired.
 func Verify() bool {
   license, err := _DecryptLicense()
@@ -55,6 +58,7 @@ func Verify() bool {
   xml.Unmarshal(licenseBytes, &lic)
   expireDate, _ := time.Parse("2006-01-02 15:04", lic.Expired)
   isValid := expireDate.Sub(time.Now()) > 0
+  IsValid = isValid
   return isValid
 }
 

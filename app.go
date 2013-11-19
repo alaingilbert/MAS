@@ -23,8 +23,6 @@ import (
 
 var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
-var m_LicenseValid bool = false
-
 
 func TileHandler(w http.ResponseWriter, req *http.Request,
                  params martini.Params, p_World *core.World,
@@ -88,7 +86,7 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request, p_World *core
     io.WriteString(res, "World path invalid. Change your settings.xml")
     return
   }
-  if !m_LicenseValid {
+  if !license.IsValid {
     if req.Method == "POST" {
       lic := req.PostFormValue("license")
       file, err := os.Create("license.key")
@@ -97,7 +95,7 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request, p_World *core
       }
       defer file.Close()
       io.WriteString(file, lic)
-      m_LicenseValid = license.Verify()
+      license.Verify()
       http.Redirect(res, req, "/", 302)
       return
     }
@@ -137,8 +135,7 @@ func RenewTilesHandler(res http.ResponseWriter, req *http.Request,
 func LicenseVerifier() {
   c := time.Tick(1 * time.Hour)
   for now := range c {
-    isLicenseValid := license.Verify()
-    if !isLicenseValid {
+    if !license.Verify() {
       s_Logger.Error("License expired.", now)
       os.Exit(0)
     }
@@ -153,8 +150,6 @@ func main() {
   go LicenseVerifier()
 
   // Load license
-  isLicenseValid := license.Verify()
-  m_LicenseValid = isLicenseValid
   license.PrintLicenseInfos()
 
   // Load settings
