@@ -45,8 +45,8 @@ func NewRegion(p_RegionManager *RegionManager, p_RegionX, p_RegionZ int) *Region
 
 
 func NewRegionFromXYZ(p_RegionManager *RegionManager, p_X, p_Y, p_Z int) *Region {
-  regionX, regionZ := GetRegionFromXYZ(p_X, p_Y, p_Z)
   region := Region{}
+  regionX, regionZ := region.RegionCoordinatesFromXYZ(p_X, p_Y, p_Z)
   region.m_RegionManager = p_RegionManager
   region.m_X = regionX
   region.m_Z = regionZ
@@ -60,7 +60,7 @@ func NewRegionFromXYZ(p_RegionManager *RegionManager, p_X, p_Y, p_Z int) *Region
 }
 
 
-func GetRegionFromXYZ(x, y, z int) (int, int) {
+func (r *Region) RegionCoordinatesFromXYZ(x, y, z int) (int, int) {
   var regionX int = int(math.Floor(float64(x) / (math.Pow(2, float64(z)))))
   var regionZ int = int(math.Floor(float64(y) / (math.Pow(2, float64(z)))))
   return regionX, regionZ
