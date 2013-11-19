@@ -36,19 +36,21 @@ func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params
   path := fmt.Sprintf("tiles/%d/%d/", z, x)
   fileName := fmt.Sprintf("%d.png", y)
   file, err := os.Open(path + fileName)
+  // No image found. Try to render it.
   if err != nil {
-    img := draw.RenderTile(x, y, z, m_World, m_Theme)
-    if img == nil {
+    if m_World.RegionManager().GetRegionFromXYZ(x, y, z).Exists() {
+      img := draw.RenderTile(x, y, z, m_World, m_Theme)
+      png.Encode(w, img)
+      draw.Save(path, fileName, img)
+      return
+     } else {
       http.NotFound(w, req)
       return
     }
-    png.Encode(w, img)
-    draw.Save(path, fileName, img)
-    return
   }
   defer file.Close()
   w.Header().Set("Content-type", "image/png")
-  img, err := png.Decode(file)
+  img, _ := png.Decode(file)
   png.Encode(w, img)
 }
 
@@ -189,12 +191,13 @@ func main() {
   }
   m_Settings = settings
 
-  m_Theme = core.LoadTheme(settings.Theme)
-
   _, err = os.Stat(settings.WorldPath)
   if err != nil {
     m_WorldPathValid = false
   }
+
+  // Load theme
+  m_Theme = core.LoadTheme(settings.Theme)
 
   m_World = core.NewWorld(settings.WorldPath)
 

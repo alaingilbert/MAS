@@ -7,6 +7,7 @@ import (
   "fmt"
   "log"
   "mas/nbt"
+  "math"
   "os"
   "path"
   "strings"
@@ -28,11 +29,11 @@ type Region struct {
 // p_X region X axis.
 // p_Z region Z axis.
 // It returns a pointer to the region.
-func NewRegion(p_RegionManager *RegionManager, p_X, p_Z int) *Region {
+func NewRegion(p_RegionManager *RegionManager, p_RegionX, p_RegionZ int) *Region {
   region := Region{}
   region.m_RegionManager = p_RegionManager
-  region.m_X = p_X
-  region.m_Z = p_Z
+  region.m_X = p_RegionX
+  region.m_Z = p_RegionZ
   file, err := os.Open(path.Join(region.FilePath(), region.FileName()))
   if err != nil {
     log.Println(err)
@@ -40,6 +41,29 @@ func NewRegion(p_RegionManager *RegionManager, p_X, p_Z int) *Region {
   }
   region.m_File = file
   return &region
+}
+
+
+func NewRegionFromXYZ(p_RegionManager *RegionManager, p_X, p_Y, p_Z int) *Region {
+  regionX, regionZ := GetRegionFromXYZ(p_X, p_Y, p_Z)
+  region := Region{}
+  region.m_RegionManager = p_RegionManager
+  region.m_X = regionX
+  region.m_Z = regionZ
+  file, err := os.Open(path.Join(region.FilePath(), region.FileName()))
+  if err != nil {
+    log.Println(err)
+    return nil
+  }
+  region.m_File = file
+  return &region
+}
+
+
+func GetRegionFromXYZ(x, y, z int) (int, int) {
+  var regionX int = int(math.Floor(float64(x) / (math.Pow(2, float64(z)))))
+  var regionZ int = int(math.Floor(float64(y) / (math.Pow(2, float64(z)))))
+  return regionX, regionZ
 }
 
 

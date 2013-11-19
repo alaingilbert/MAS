@@ -38,6 +38,11 @@ func (r *RegionManager) GetRegion(p_X, p_Z int) *Region {
 }
 
 
+func (r *RegionManager) GetRegionFromXYZ(p_X, p_Y, p_Z int) *Region {
+  return NewRegionFromXYZ(r, p_X, p_Y, p_Z)
+}
+
+
 func (r *RegionManager) RegionFileNames() []string {
   tilesDirectory, err := os.Open(path.Join(r.m_RegionPath, REGION_DIR))
   if err != nil {
