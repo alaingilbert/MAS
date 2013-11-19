@@ -4,55 +4,55 @@ import (
   "testing"
 )
 
-func TestDrawtile(t *testing.T) {
-  regionX, regionZ := GetRegionFromXYZ(0, 0, 0)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(1, 0, 0)
-  if regionX != 1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(2, 0, 0)
-  if regionX != 2 || regionZ != 0 { t.Fail() }
-
-  regionX, regionZ = GetRegionFromXYZ(0, 0, 1)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(1, 0, 1)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(2, 0, 1)
-  if regionX != 1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(3, 0, 1)
-  if regionX != 1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(4, 0, 1)
-  if regionX != 2 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(-1, 0, 1)
-  if regionX != -1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(-2, 0, 1)
-  if regionX != -1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(-3, 0, 1)
-  if regionX != -2 || regionZ != 0 { t.Fail() }
-
-  regionX, regionZ = GetRegionFromXYZ(0, 0, 2)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(1, 0, 2)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(2, 0, 2)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(3, 0, 2)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(4, 0, 2)
-  if regionX != 1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(8, 0, 2)
-  if regionX != 2 || regionZ != 0 { t.Fail() }
-
-  regionX, regionZ = GetRegionFromXYZ(0, 0, 3)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(7, 0, 3)
-  if regionX != 0 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(8, 0, 3)
-  if regionX != 1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(15, 0, 3)
-  if regionX != 1 || regionZ != 0 { t.Fail() }
-  regionX, regionZ = GetRegionFromXYZ(16, 0, 3)
-  if regionX != 2 || regionZ != 0 { t.Fail() }
-}
+//func TestDrawtile(t *testing.T) {
+//  regionX, regionZ := GetRegionFromXYZ(0, 0, 0)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(1, 0, 0)
+//  if regionX != 1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(2, 0, 0)
+//  if regionX != 2 || regionZ != 0 { t.Fail() }
+//
+//  regionX, regionZ = GetRegionFromXYZ(0, 0, 1)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(1, 0, 1)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(2, 0, 1)
+//  if regionX != 1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(3, 0, 1)
+//  if regionX != 1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(4, 0, 1)
+//  if regionX != 2 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(-1, 0, 1)
+//  if regionX != -1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(-2, 0, 1)
+//  if regionX != -1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(-3, 0, 1)
+//  if regionX != -2 || regionZ != 0 { t.Fail() }
+//
+//  regionX, regionZ = GetRegionFromXYZ(0, 0, 2)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(1, 0, 2)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(2, 0, 2)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(3, 0, 2)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(4, 0, 2)
+//  if regionX != 1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(8, 0, 2)
+//  if regionX != 2 || regionZ != 0 { t.Fail() }
+//
+//  regionX, regionZ = GetRegionFromXYZ(0, 0, 3)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(7, 0, 3)
+//  if regionX != 0 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(8, 0, 3)
+//  if regionX != 1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(15, 0, 3)
+//  if regionX != 1 || regionZ != 0 { t.Fail() }
+//  regionX, regionZ = GetRegionFromXYZ(16, 0, 3)
+//  if regionX != 2 || regionZ != 0 { t.Fail() }
+//}
 
 
 func TestStartingChunk(t *testing.T) {

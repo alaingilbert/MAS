@@ -1,6 +1,11 @@
 package core
 
 
+import (
+  "os"
+)
+
+
 // World represent a minecraft world.
 type World struct {
   m_Path string
@@ -17,6 +22,12 @@ func NewWorld(p_Path string) *World {
   world.m_RegionManager = NewRegionManager(world.m_Path)
   world.m_PlayerManager = NewPlayerManager(world.m_Path)
   return world
+}
+
+
+func (w *World) PathValid() bool {
+  _, err := os.Stat(w.m_Path)
+  return err == nil
 }
 
 

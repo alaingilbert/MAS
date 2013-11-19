@@ -81,20 +81,20 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme *core.Theme) *image.RG
 
       heightmap := chunk.HeightMap()
 
-      for block := 0; block < 256; block += skip {
-        chunkY := uint8(heightmap[block])
-        blockX := block % 16
-        blockZ := block / 16
-        blockId := chunk.BlockId(blockX, int(chunkY), blockZ)
-        c := p_Theme.GetById(blockId)
-        c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
+      for heightmapBlockIndex := 0; heightmapBlockIndex < 256; heightmapBlockIndex += skip {
+        chunkY := int(uint8(heightmap[heightmapBlockIndex]))
+        blockX := heightmapBlockIndex % 16
+        blockZ := heightmapBlockIndex / 16
+        blockId := chunk.BlockId(blockX, chunkY, blockZ)
+        block := p_Theme.GetById(blockId)
+        color := color.RGBA{block.Red, block.Green, block.Blue, block.Alpha}
 
         FillRect(img,
-                 (block % 16 + (chunkX-startingChunkX) * chunkSize) * scale / skip,
-                 (block / 16 + (chunkZ-startingChunkZ) * chunkSize) * scale / skip,
+                 (heightmapBlockIndex % 16 + (chunkX-startingChunkX) * chunkSize) * scale / skip,
+                 (heightmapBlockIndex / 16 + (chunkZ-startingChunkZ) * chunkSize) * scale / skip,
                  blockSize * scale,
                  blockSize * scale,
-                 c2)
+                 color)
       }
     }
   }

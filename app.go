@@ -6,6 +6,7 @@ import (
   "fmt"
   "image/png"
   "net/http"
+  "mas/api"
   "mas/core"
   "mas/license"
   "mas/logger"
@@ -17,19 +18,17 @@ import (
   "strconv"
   "html/template"
   "mas/draw"
-  "encoding/json"
 )
 
 
 var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
-var m_World *core.World
-var m_Settings *core.Settings
-var m_Theme *core.Theme
 var m_LicenseValid bool = false
-var m_WorldPathValid = true
 
-func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params) {
+
+func TileHandler(w http.ResponseWriter, req *http.Request,
+                 params martini.Params, p_World *core.World,
+                 p_Theme *core.Theme) {
   x, _ := strconv.Atoi(params["x"])
   y, _ := strconv.Atoi(params["y"])
   z, _ := strconv.Atoi(params["z"])
@@ -38,8 +37,8 @@ func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params
   file, err := os.Open(path + fileName)
   // No image found. Try to render it.
   if err != nil {
-    if m_World.RegionManager().GetRegionFromXYZ(x, y, z).Exists() {
-      img := draw.RenderTile(x, y, z, m_World, m_Theme)
+    if p_World.RegionManager().GetRegionFromXYZ(x, y, z).Exists() {
+      img := draw.RenderTile(x, y, z, p_World, p_Theme)
       png.Encode(w, img)
       draw.Save(path, fileName, img)
       return
@@ -84,8 +83,8 @@ func LicenseHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 
-func LicenseMiddleware(res http.ResponseWriter, req *http.Request) {
-  if !m_WorldPathValid {
+func LicenseMiddleware(res http.ResponseWriter, req *http.Request, p_World *core.World) {
+  if !p_World.PathValid() {
     io.WriteString(res, "World path invalid. Change your settings.xml")
     return
   }
@@ -128,36 +127,10 @@ func ThemeHandler(res http.ResponseWriter, req *http.Request) {
 }
 
 
-func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
-  players := m_World.PlayerManager().GetPlayers()
-  var playersJson []core.PlayerJson
-  for _, player := range players {
-    playerJson := player.ToJson()
-    playersJson = append(playersJson, playerJson)
-  }
-  b, _ := json.Marshal(playersJson)
-  res.Write(b)
-}
-
-
-func RenewTilesHandler(res http.ResponseWriter, req *http.Request) {
+func RenewTilesHandler(res http.ResponseWriter, req *http.Request,
+                       p_Settings *core.Settings, p_Theme *core.Theme) {
   os.RemoveAll("./tiles/")
-  m_Theme = core.LoadTheme(m_Settings.Theme)
-}
-
-
-func Server() {
-  s_Logger.Debug("Start web server")
-  m := martini.Classic()
-  m.Use(martini.Static("public/static"))
-  m.Use(LicenseMiddleware)
-  m.Get("/", HomeHandler)
-  m.Get("/tile/:z/:x/:y.png", TileHandler)
-  m.Get("/license/", LicenseHandler)
-  m.Get("/theme/", ThemeHandler)
-  m.Get("/api/players/", ApiPlayersHandler)
-  m.Get("/renewtiles/", RenewTilesHandler)
-  http.ListenAndServe(fmt.Sprintf(":%d", m_Settings.WebServer.Port) , m)
+  p_Theme = core.LoadTheme(p_Settings.Theme)
 }
 
 
@@ -189,18 +162,24 @@ func main() {
   if err != nil {
     fmt.Println(err)
   }
-  m_Settings = settings
-
-  _, err = os.Stat(settings.WorldPath)
-  if err != nil {
-    m_WorldPathValid = false
-  }
 
   // Load theme
-  m_Theme = core.LoadTheme(settings.Theme)
+  theme := core.LoadTheme(settings.Theme)
 
-  m_World = core.NewWorld(settings.WorldPath)
+  world := core.NewWorld(settings.WorldPath)
 
   // start webserver
-  Server()
+  m := martini.Classic()
+  m.Map(world)
+  m.Map(settings)
+  m.Map(theme)
+  m.Use(martini.Static("public/static"))
+  m.Use(LicenseMiddleware)
+  m.Get("/", HomeHandler)
+  m.Get("/tile/:z/:x/:y.png", TileHandler)
+  m.Get("/license/", LicenseHandler)
+  m.Get("/theme/", ThemeHandler)
+  m.Get("/api/players/", api.PlayersHandler)
+  m.Get("/renewtiles/", RenewTilesHandler)
+  http.ListenAndServe(fmt.Sprintf(":%d", settings.WebServer.Port) , m)
 }
