@@ -25,7 +25,7 @@ var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
 var m_World *core.World
 var m_Settings *core.Settings
-var m_Theme *core.Theme = core.LoadTheme("default")
+var m_Theme *core.Theme
 var m_LicenseValid bool = false
 var m_WorldPathValid = true
 
@@ -188,6 +188,8 @@ func main() {
     fmt.Println(err)
   }
   m_Settings = settings
+
+  m_Theme = core.LoadTheme(settings.Theme)
 
   _, err = os.Stat(settings.WorldPath)
   if err != nil {
