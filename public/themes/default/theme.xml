@@ -164,7 +164,7 @@
   <Block id="161" red="255" green="0"   blue="0"   alpha="255" name="leaves2"></Block>
   <Block id="162" red="255" green="0"   blue="0"   alpha="255" name="log2"></Block>
   <Block id="163" red="255" green="0"   blue="0"   alpha="255" name="acacia_stairs"></Block>
-  <Block id="164" red="255" green="0"   blue="0"   alpha="255" name="dark_oak_stairs"></Block>
+  <Block id="164" red="52"  green="34"  blue="11"  alpha="255" name="dark_oak_stairs"></Block>
 
 
 
