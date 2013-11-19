@@ -65,7 +65,7 @@ func NbChunk(z int) int {
 }
 
 
-func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *image.RGBA {
+func RenderTile(x, y, z int, p_World *core.World, p_Theme *core.Theme) *image.RGBA {
   blockSize := 1
   chunkSize := 16 * blockSize
   regionX, regionZ := GetRegionFromXYZ(x, y, z)
@@ -94,7 +94,7 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme map[byte]core.Block) *
         blockX := block % 16
         blockZ := block / 16
         blockId := chunk.BlockId(blockX, int(chunkY), blockZ)
-        c := p_Theme[blockId]
+        c := p_Theme.GetById(blockId)
         c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
 
         FillRect(img,
@@ -129,7 +129,7 @@ func GetScale(z int) int {
 // RenderRegionTile render a tile for a given region.
 // p_Region the region to render.
 // It returns an image tile.
-func RenderRegionTile(p_Region *core.Region, p_Theme map[byte]core.Block) *image.RGBA {
+func RenderRegionTile(p_Region *core.Region, p_Theme *core.Theme) *image.RGBA {
   blockSize := 1
   chunkSize := 16 * blockSize
   regionSize := 32 * chunkSize
@@ -154,7 +154,7 @@ func RenderRegionTile(p_Region *core.Region, p_Theme map[byte]core.Block) *image
         blockX := block % 16
         blockZ := block / 16
         blockId := chunk.BlockId(blockX, int(chunkY), blockZ)
-        c := p_Theme[blockId]
+        c := p_Theme.GetById(blockId)
         c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
 
         FillRect(img,

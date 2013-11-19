@@ -10,14 +10,14 @@ import (
 type JobRenderMemTile struct {
   m_X, m_Y, m_Z int
   m_World *core.World
-  m_Theme map[byte]core.Block
+  m_Theme *core.Theme
   m_Chan chan *image.RGBA
 }
 
 
 func NewJobRenderMemTile(p_X, p_Y, p_Z int,
                             p_World *core.World,
-                            p_Theme map[byte]core.Block,
+                            p_Theme *core.Theme,
                             p_Chan chan *image.RGBA) JobRenderMemTile {
   job := JobRenderMemTile{p_X, p_Y, p_Z, p_World, p_Theme, p_Chan}
   return job

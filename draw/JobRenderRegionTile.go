@@ -11,7 +11,7 @@ import (
 type JobRenderRegionTile struct {
   m_RegionX, m_RegionZ int
   m_World *core.World
-  m_Theme map[byte]core.Block
+  m_Theme *core.Theme
 }
 
 
@@ -21,7 +21,7 @@ type JobRenderRegionTile struct {
 // p_World pointer to a minecraft world.
 // p_Theme color theme to be used.
 // It returns a JobRenderRegionTile.
-func NewJobRenderRegionTile(p_RegionX, p_RegionZ int, p_World *core.World, p_Theme map[byte]core.Block) JobRenderRegionTile {
+func NewJobRenderRegionTile(p_RegionX, p_RegionZ int, p_World *core.World, p_Theme *core.Theme) JobRenderRegionTile {
   job := JobRenderRegionTile{p_RegionX, p_RegionZ, p_World, p_Theme}
   return job
 }

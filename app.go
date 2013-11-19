@@ -11,7 +11,6 @@ import (
   "mas/logger"
   //"mas/worker"
   "io"
-  "io/ioutil"
   "os"
   "runtime"
   "time"
@@ -19,28 +18,14 @@ import (
   "html/template"
   "mas/draw"
   "encoding/json"
-  "encoding/xml"
 )
-
-
-type Settings struct {
-  Theme string
-  WorldPath string
-  NbtVersion string
-  WebServer WebServer
-}
-
-type WebServer struct {
-  Host string
-  Port int
-}
 
 
 var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
 var m_World *core.World
-var m_Settings Settings
-var theme map[byte]core.Block = core.LoadTheme("default")
+var m_Settings *core.Settings
+var m_Theme *core.Theme = core.LoadTheme("default")
 var m_LicenseValid bool = false
 var m_WorldPathValid = true
 
@@ -52,7 +37,7 @@ func TileHandler(w http.ResponseWriter, req *http.Request, params martini.Params
   fileName := fmt.Sprintf("%d.png", y)
   file, err := os.Open(path + fileName)
   if err != nil {
-    img := draw.RenderTile(x, y, z, m_World, theme)
+    img := draw.RenderTile(x, y, z, m_World, m_Theme)
     if img == nil {
       http.NotFound(w, req)
       return
@@ -155,6 +140,7 @@ func ApiPlayersHandler(res http.ResponseWriter, req *http.Request) {
 
 func RenewTilesHandler(res http.ResponseWriter, req *http.Request) {
   os.RemoveAll("./tiles/")
+  m_Theme = core.LoadTheme(m_Settings.Theme)
 }
 
 
@@ -185,24 +171,6 @@ func LicenseVerifier() {
 }
 
 
-func CreateSettingsFile() {
-  file, _ := os.Create("settings.xml")
-  defer file.Close()
-  content := `<?xml version="1.0" encoding="UTF-8" ?>
-<Settings>
-  <Theme>default</Theme>
-  <WorldPath>/Path/To/world</WorldPath>
-  <NbtVersion>Anvil</NbtVersion>
-
-  <WebServer>
-    <Host>127.0.0.1</Host>
-    <Port>8000</Port>
-  </WebServer>
-</Settings>`
-  file.Write([]byte(content))
-}
-
-
 func main() {
   numCPU := runtime.NumCPU()
   runtime.GOMAXPROCS(numCPU)
@@ -215,13 +183,10 @@ func main() {
   license.PrintLicenseInfos()
 
   // Load settings
-  _, err := os.Stat("settings.xml")
+  settings, err := core.LoadSettings()
   if err != nil {
-    CreateSettingsFile()
+    fmt.Println(err)
   }
-  settingsFile, _ := ioutil.ReadFile("settings.xml")
-  var settings Settings
-  xml.Unmarshal(settingsFile, &settings)
   m_Settings = settings
 
   _, err = os.Stat(settings.WorldPath)
