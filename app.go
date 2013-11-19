@@ -147,6 +147,7 @@ func main() {
   numCPU := runtime.NumCPU()
   runtime.GOMAXPROCS(numCPU)
 
+  license.Verify()
   go LicenseVerifier()
 
   // Load license
