@@ -87,14 +87,31 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme *core.Theme) *image.RG
         blockZ := heightmapBlockIndex / 16
         blockId := chunk.BlockId(blockX, chunkY, blockZ)
         block := p_Theme.GetById(blockId)
-        color := color.RGBA{block.Red, block.Green, block.Blue, block.Alpha}
+        colorr := color.RGBA{block.Red, block.Green, block.Blue, block.Alpha}
+
+        if blockId == 8 || blockId == 9 {
+          for tmpY := chunkY; blockId == 8 || blockId == 9; tmpY-- {
+            blockId = chunk.BlockId(blockX, tmpY, blockZ)
+          }
+          block = p_Theme.GetById(blockId)
+
+          alpha1 := 1.0
+          alpha2 := 0.2
+
+          alpha := alpha2 + alpha1 * (1.0 - alpha2)
+          red := uint8((float64(block.Red) * alpha2 + float64(colorr.R) * alpha1 * (1.0 - alpha2)) / alpha)
+          green := uint8((float64(block.Green) * alpha2 + float64(colorr.G) * alpha1 * (1.0 - alpha2)) / alpha)
+          blue := uint8((float64(block.Blue) * alpha2 + float64(colorr.B) * alpha1 * (1.0 - alpha2)) / alpha)
+
+          colorr = color.RGBA{red, green, blue, 255}
+        }
 
         FillRect(img,
                  (heightmapBlockIndex % 16 + (chunkX-startingChunkX) * chunkSize) * scale / skip,
                  (heightmapBlockIndex / 16 + (chunkZ-startingChunkZ) * chunkSize) * scale / skip,
                  blockSize * scale,
                  blockSize * scale,
-                 color)
+                 colorr)
       }
     }
   }
