@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+
+import os
+import subprocess
+import json
+import errno
+import shutil
+
+
+def main():
+  #try:
+  #  os.makedirs("releases/")
+  #except OSError as exc: # Python >2.5
+  #  if exc.errno == errno.EEXIST and os.path.isdir(path):
+  #    pass
+  #  else: raise
+
+  label = subprocess.check_output(["git", "rev-parse", "HEAD"])
+  print label
+
+  package_data = load_package_json()
+  version_path = "./releases/%s" % package_data["version"]
+  if os.path.exists(version_path):
+    print "Version already exists"
+    return
+
+  os.makedirs(version_path)
+  os.makedirs("%s/windows" % version_path)
+  os.makedirs("%s/linux" % version_path)
+  os.makedirs("%s/mac" % version_path)
+
+  shutil.copytree("./public", "%s/public" % version_path)
+
+  returncode = subprocess.call(["go", "build", "-o", "%s/linux/app" % version_path, "./app.go"])
+  print returncode
+  returncode = subprocess.call("GOOS=windows GOARCH=386 go build -o %s/windows/app ./app.go" % version_path, shell=True)
+  print returncode
+
+
+def load_package_json():
+  with open("./package.json") as f:
+    data = json.load(f)
+  return data
+
+
+if __name__ == "__main__":
+  main()
