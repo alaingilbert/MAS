@@ -2,11 +2,18 @@
 <html>
   <head>
     <title>{{.title}}</title>
-    <link rel="stylesheet" href="/css/leaflet.css" />
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/leaflet.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      $( document ).ready(function() {
+        $("#sidebar").on('mouseenter mouseleave', function () {
+          $(this).find("#panel").stop().fadeToggle( "fast", "linear" );
+        });
+      });
+    </script>
     <style>
       html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
       #map {
@@ -22,13 +29,15 @@
     <div style="height: 100%">
       <div id="map"></div>
     </div>
-      <div style="left: 0; position: absolute; top: 0; bottom: 0; background-color: #000; color: #fff; border-right: solid 1px white; opacity: 0.8;" class="col-md-1" >
-        <div class="players">
+      <div id="sidebar" style="left: 0; position: absolute; top: 0; bottom: 0;" class="col-md-1" >
+        <div id="panel" style="left: 0; position: absolute; top: 0; bottom: 0; background-color: #000; color: #fff; border-right: solid 1px white; opacity: 0.8; display: none;">
+          <div class="players">
           <div class="btn btn-default" id="maze">Maze</div><br />
           <div class="btn btn-default" id="newYork">New York</div>
+          </div>
+          <div id="coords">x: 0,<br /> z: 0</div>
+          <div class="btn btn-danger" id="renewTiles">Renew tiles</div><br />
         </div>
-        <div id="coords">x: 0,<br /> z: 0</div>
-        <div class="btn btn-danger" id="renewTiles">Renew tiles</div><br />
       </div>
     <script>
       L.Projection.NoWrap = {
