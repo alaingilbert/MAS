@@ -54,12 +54,14 @@
         zoom: 1,
         minZoom: 0,
         maxZoom: 5,
-        zoomAnimation: false
+        zoomAnimation: false,
+        zoomControl: false
       }).setView([1, 0], 1);
       L.tileLayer('/tile/{z}/{x}/{y}.png', {
         tileSize: 256,
         continuousWorld: true
       }).addTo(map);
+      new L.control.zoom({ position: 'topright' }).addTo(map);
 
       map.on('mousemove', function(e) {
         var y = e.latlng.lat * 16*32;
