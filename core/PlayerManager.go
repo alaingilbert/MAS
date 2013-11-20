@@ -2,6 +2,7 @@ package core
 
 
 import (
+  "log"
   "os"
   "path"
   "strings"
@@ -39,7 +40,10 @@ func (p *PlayerManager) GetPlayer(p_Name string) *Player {
 
 
 func (p *PlayerManager) PlayerNames() []string {
-  playersDir, _ := os.Open(path.Join(p.m_WorldPath, PLAYER_DIR))
+  playersDir, err := os.Open(path.Join(p.m_WorldPath, PLAYER_DIR))
+  if err != nil {
+    log.Panic(err)
+  }
   defer playersDir.Close()
   var newFiles []string
   files, _ := playersDir.Readdirnames(0)
