@@ -86,12 +86,18 @@
       });
 
       var players = {};
-
       var GetPlayersPositions = function() {
         $.get("/api/players/", function(data) {
           $.each(data, function (index, player) {
             if (players[player.Name] == null) {
-              players[player.Name] = new L.Marker(new L.LatLng(player.Z/(16*32), player.X/(32*16), true)).bindPopup(player.Name).addTo(map);
+              players[player.Name] = new L.Marker(
+                new L.LatLng(player.Z/(16*32), player.X/(32*16), true),
+                { icon: L.icon({
+                    iconUrl: "/api/players/icon/" + player.Name + ".png",
+                    iconSize: [4*8, 4*8]
+
+                  })
+                }).bindPopup(player.Name).addTo(map);
             } else {
               players[player.Name].setLatLng(new L.LatLng(player.Z/(16*32), player.X/(32*16), true));
             }
