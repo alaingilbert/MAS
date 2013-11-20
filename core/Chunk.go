@@ -32,12 +32,7 @@ func (c *Chunk) SetData(p_Data nbt.NbtTree) {
 func (c *Chunk) BlockId(p_X, p_Y, p_Z int) byte {
   sectionY := p_Y / 16
   sections := c.m_Data.Root().Entries["Level"].(nbt.TagNodeCompound).Entries["Sections"].(nbt.TagNodeList)
-  //lastSection := sections.Get(section.Length() - 1)
-  //lastSectionBlocks := lastSection.(nbt.TagNodeCompound).Entries["Blocks"].(nbt.TagNodeByteArray)
-  //for i := 0; i < 16; i++ {
-  //  if lastSectionBlocks.Data()[p_X + p_Z * 16] {
-  //  }
-  //}
+
   if int32(sectionY) >= sections.Length() {
     return 0
   }

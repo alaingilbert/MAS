@@ -2,11 +2,21 @@
 <html>
   <head>
     <title>{{.title}}</title>
-    <link rel="stylesheet" href="/css/leaflet.css" />
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/leaflet.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      $( document ).ready(function() {
+        $("#panel").on('mouseenter', function () {
+          $(this).stop().animate({opacity: 0.8}, "fast", "linear" );
+        });
+        $("#panel").on('mouseleave', function () {
+          $(this).stop().animate({opacity: 0.0}, "fast", "linear" );
+        });
+      });
+    </script>
     <style>
       html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
       #map {
@@ -16,21 +26,27 @@
         top: 0;
         bottom: 0;
       }
+      #panel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        background-color: #000;
+        color: #fff;
+        border-right: solid 1px white;
+        opacity: 0.0;
+      }
     </style>
   </head>
   <body>
-    <div style="height: 100%">
-      <div class="col-md-1">
-        <div class="players">
-          <div class="btn btn-default" id="maze">Maze</div><br />
-          <div class="btn btn-default" id="newYork">New York</div>
-        </div>
-        <div id="coords">x: 0,<br /> z: 0</div>
-        <div class="btn btn-danger" id="renewTiles">Renew tiles</div><br />
+    <div id="map"></div>
+    <div id="panel" class="col-md-1" >
+      <div class="players">
+      <div class="btn btn-default" id="maze">Maze</div><br />
+      <div class="btn btn-default" id="newYork">New York</div>
       </div>
-      <div class="col-md-11" style="height: 100%">
-        <div id="map"></div>
-      </div>
+      <div id="coords">x: 0,<br /> z: 0</div>
+      <div class="btn btn-danger" id="renewTiles">Renew tiles</div><br />
     </div>
     <script>
       L.Projection.NoWrap = {
@@ -54,12 +70,14 @@
         zoom: 1,
         minZoom: 0,
         maxZoom: 5,
-        zoomAnimation: false
+        zoomAnimation: false,
+        zoomControl: false
       }).setView([1, 0], 1);
       L.tileLayer('/tile/{z}/{x}/{y}.png', {
         tileSize: 256,
         continuousWorld: true
       }).addTo(map);
+      new L.control.zoom({ position: 'topright' }).addTo(map);
 
       map.on('mousemove', function(e) {
         var y = e.latlng.lat * 16*32;
@@ -77,12 +95,18 @@
       });
 
       var players = {};
-
       var GetPlayersPositions = function() {
         $.get("/api/players/", function(data) {
           $.each(data, function (index, player) {
             if (players[player.Name] == null) {
-              players[player.Name] = new L.Marker(new L.LatLng(player.Z/(16*32), player.X/(32*16), true)).bindPopup(player.Name).addTo(map);
+              players[player.Name] = new L.Marker(
+                new L.LatLng(player.Z/(16*32), player.X/(32*16), true),
+                { icon: L.icon({
+                    iconUrl: "/api/players/icon/" + player.Name + ".png",
+                    iconSize: [4*8, 4*8]
+
+                  })
+                }).bindPopup(player.Name).addTo(map);
             } else {
               players[player.Name].setLatLng(new L.LatLng(player.Z/(16*32), player.X/(32*16), true));
             }

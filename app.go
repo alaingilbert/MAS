@@ -47,6 +47,7 @@ func main() {
   m.Get("/license/", app.LicenseHandler)
   m.Get("/theme/", app.ThemeHandler)
   m.Get("/api/players/", api.PlayersHandler)
+  m.Get("/api/players/icon/:name.png", api.PlayerIconHandler)
   m.Get("/renewtiles/", app.RenewTilesHandler)
-  http.ListenAndServe(fmt.Sprintf(":%d", settings.WebServer.Port) , m)
+  http.ListenAndServe(fmt.Sprintf("%s:%d", settings.WebServer.Host, settings.WebServer.Port) , m)
 }

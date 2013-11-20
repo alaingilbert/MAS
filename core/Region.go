@@ -34,12 +34,7 @@ func NewRegion(p_RegionManager *RegionManager, p_RegionX, p_RegionZ int) *Region
   region.m_RegionManager = p_RegionManager
   region.m_X = p_RegionX
   region.m_Z = p_RegionZ
-  file, err := os.Open(path.Join(region.FilePath(), region.FileName()))
-  if err != nil {
-    log.Println(err)
-    return nil
-  }
-  region.m_File = file
+  region.m_File = nil
   return &region
 }
 
@@ -50,12 +45,7 @@ func NewRegionFromXYZ(p_RegionManager *RegionManager, p_X, p_Y, p_Z int) *Region
   region.m_RegionManager = p_RegionManager
   region.m_X = regionX
   region.m_Z = regionZ
-  file, err := os.Open(path.Join(region.FilePath(), region.FileName()))
-  if err != nil {
-    log.Println(err)
-    return nil
-  }
-  region.m_File = file
+  region.m_File = nil
   return &region
 }
 
@@ -69,6 +59,7 @@ func (r *Region) RegionCoordinatesFromXYZ(x, y, z int) (int, int) {
 
 func (r *Region) Dispose() {
   r.m_File.Close()
+  r.m_File = nil
 }
 
 
@@ -100,6 +91,13 @@ func (r *Region) Exists() bool {
 // p_LocalZ Z position of the chunk in the region.
 // It returns a pointer to the chunk.
 func (r *Region) GetChunk(p_LocalX, p_LocalZ int) *Chunk {
+  if r.m_File == nil {
+    file, err := os.Open(path.Join(r.FilePath(), r.FileName()))
+    if err != nil {
+      log.Println(err)
+    }
+    r.m_File = file
+  }
   location := r.chunkCoordinate(p_LocalX, p_LocalZ)
   r.m_File.Seek(int64(location), 0)
   offsetBytes := make([]byte, 3)
