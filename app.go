@@ -28,10 +28,7 @@ func main() {
   license.PrintLicenseInfos()
 
   // Load settings
-  settings, err := core.LoadSettings()
-  if err != nil {
-    fmt.Println(err)
-  }
+  settings, _ := core.LoadSettings()
 
   // Load theme
   theme := core.LoadTheme(settings.Theme)

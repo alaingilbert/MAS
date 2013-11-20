@@ -3,6 +3,7 @@ package core
 
 import (
   "encoding/xml"
+  "fmt"
   "io/ioutil"
   "os"
 )
@@ -24,7 +25,11 @@ type WebServer struct {
 func LoadSettings() (*Settings, error) {
   _, err := os.Stat("settings.xml")
   if err != nil {
-    CreateSettingsFile()
+    err := CreateSettingsFile()
+    if err != nil {
+      fmt.Println(err)
+      return nil, err
+    }
   }
 
   settingsFile, err := ioutil.ReadFile("settings.xml")
@@ -37,8 +42,11 @@ func LoadSettings() (*Settings, error) {
 }
 
 
-func CreateSettingsFile() {
-  file, _ := os.Create("settings.xml")
+func CreateSettingsFile() error {
+  file, err := os.Create("settings.xml")
+  if err != nil {
+    return err
+  }
   defer file.Close()
   content := `<?xml version="1.0" encoding="UTF-8" ?>
 <Settings>
@@ -52,4 +60,5 @@ func CreateSettingsFile() {
   </WebServer>
 </Settings>`
   file.Write([]byte(content))
+  return nil
 }
