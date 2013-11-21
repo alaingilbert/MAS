@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+# darwin, freebsd, linux, windows
+# 386, amd64, (linux) arm
+# cd /usr/local/go/src
+# sudo GOOS=windows GOARCH=386 CGO_ENABLED=0 ./make.bash --no-clean
+
 
 import os
 import subprocess
@@ -32,10 +37,12 @@ def main():
 
   shutil.copytree("./public", "%s/public" % version_path)
 
-  returncode = subprocess.call(["go", "build", "-o", "%s/linux/app" % version_path, "./app.go"])
-  print returncode
-  returncode = subprocess.call("GOOS=windows GOARCH=386 go build -o %s/windows/app ./app.go" % version_path, shell=True)
-  print returncode
+  for goos in ["darwin", "linux", "windows"]:
+    for goarch in ["386", "amd64"]:
+      returncode = subprocess.call("GOOS=%s GOARCH=%s go build -o %s/%s/%s/app.exe ./app.go"
+          % (goos, goarch, version_path, goos, goarch)
+          , shell=True)
+      print returncode
 
 
 def load_package_json():
