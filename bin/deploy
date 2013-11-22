@@ -22,18 +22,13 @@ def main():
   #  else: raise
 
   label = subprocess.check_output(["git", "rev-parse", "HEAD"])
-  print label
+  #print label
 
   package_data = load_package_json()
   version_path = "./releases/%s" % package_data["version"]
   if os.path.exists(version_path):
     print "Version already exists"
     return
-
-  os.makedirs(version_path)
-  os.makedirs("%s/windows" % version_path)
-  os.makedirs("%s/linux" % version_path)
-  os.makedirs("%s/mac" % version_path)
 
   shutil.copytree("./public", "%s/public" % version_path)
 
@@ -42,7 +37,10 @@ def main():
       returncode = subprocess.call("GOOS=%s GOARCH=%s go build -o %s/%s/%s/app.exe ./app.go"
           % (goos, goarch, version_path, goos, goarch)
           , shell=True)
-      print returncode
+      if returncode == 0:
+          print "%s %s Ok" % (goos, goarch)
+      else:
+          print "%s %s Fail" % (goos, goarch)
 
 
 def load_package_json():

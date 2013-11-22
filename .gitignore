@@ -1,3 +1,6 @@
 *.swp
 tiles/*.png
 tiles/*
+settings.xml
+releases/
+license.key
