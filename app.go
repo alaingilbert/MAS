@@ -31,7 +31,7 @@ func main() {
   settings, _ := core.LoadSettings()
 
   // Load theme
-  theme := core.LoadTheme(settings.Theme)
+  theme := core.NewTheme(settings.Theme)
 
   world := core.NewWorld(settings.WorldPath)
 

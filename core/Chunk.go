@@ -58,7 +58,7 @@ func (c *Chunk) BlockId(p_X, p_Y, p_Z int) byte {
        blockId != 83 && blockId != 104 && blockId != 105 && blockId != 140 && blockId != 68 &&
        blockId != 64 && blockId != 65 && blockId != 107 && blockId != 132 && blockId != 69 &&
        blockId != 63 && blockId != 32 && blockId != 27 && blockId != 77 && blockId != 143 &&
-       blockId != 71 && blockId != 117{
+       blockId != 71 && blockId != 117 && blockId != 95 && blockId != 160 {
       validBlockId = true
     }
     p_Y -= 1

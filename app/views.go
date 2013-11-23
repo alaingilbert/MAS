@@ -83,5 +83,5 @@ func TileHandler(w http.ResponseWriter, req *http.Request,
 func RenewTilesHandler(res http.ResponseWriter, req *http.Request,
                        p_Settings *core.Settings, p_Theme *core.Theme) {
   os.RemoveAll("./tiles/")
-  p_Theme = core.LoadTheme(p_Settings.Theme)
+  p_Theme.Reload()
 }

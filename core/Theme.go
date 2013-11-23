@@ -23,13 +23,26 @@ type Block struct {
 
 type Theme struct {
   m_Map map[byte]Block
+  m_Theme string
 }
 
 
-func LoadTheme(p_Theme string) *Theme {
-  xmlFile, err := os.Open("./public/themes/default/theme.xml")
+func NewTheme(p_Theme string) *Theme {
+  theme := Theme{}
+  theme.m_Theme = p_Theme
+  return &theme
+}
+
+
+func (t *Theme) Reload() {
+  t.LoadTheme()
+}
+
+
+func (t *Theme) LoadTheme() {
+  xmlFile, err := os.Open("public/themes/default/theme.xml")
   if err != nil {
-    s_Logger.Fatal("Cant load theme file")
+    s_Logger.Fatal("Cant load theme file", err)
   }
   defer xmlFile.Close()
 
@@ -37,13 +50,10 @@ func LoadTheme(p_Theme string) *Theme {
   var q Query
   xml.Unmarshal(b, &q)
 
-  theme := Theme{}
-  theme.m_Map = make(map[byte]Block)
+  t.m_Map = make(map[byte]Block)
   for _, block := range q.Blocks {
-    theme.m_Map[block.Id] = block
+    t.m_Map[block.Id] = block
   }
-
-  return &theme
 }
 
 

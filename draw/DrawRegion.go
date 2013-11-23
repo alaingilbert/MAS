@@ -121,11 +121,11 @@ func RenderTile(x, y, z int, p_World *core.World, p_Theme *core.Theme) *image.RG
 
 
 func BlockToSkip(z int) int {
- if z == 0 {
-  return 2
- } else {
-  return 1
- }
+  if z == 0 {
+    return 2
+  } else {
+    return 1
+  }
 }
 
 
