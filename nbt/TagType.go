@@ -1,20 +1,31 @@
 package nbt
 
-
+// TagType ...
 type TagType byte
 
-
 const (
-  TAG_END TagType = iota
-  TAG_BYTE
-  TAG_SHORT
-  TAG_INT
-  TAG_LONG
-  TAG_FLOAT
-  TAG_DOUBLE
-  TAG_BYTE_ARRAY
-  TAG_STRING
-  TAG_LIST
-  TAG_COMPOUND
-  TAG_INT_ARRAY
+  // TagEnd ...
+  TagEnd TagType = iota
+  // TagByte ...
+  TagByte
+  // TagShort ...
+  TagShort
+  // TagInt ...
+  TagInt
+  // TagLong ...
+  TagLong
+  // TagFloat ...
+  TagFloat
+  // TagDouble ...
+  TagDouble
+  // TagByteArray ...
+  TagByteArray
+  // TagString ...
+  TagString
+  //TagList ...
+  TagList
+  // TagCompound ...
+  TagCompound
+  // TagIntArray ...
+  TagIntArray
 )

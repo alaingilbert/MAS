@@ -1,6 +1,5 @@
 package main
 
-
 import (
   "fmt"
   "github.com/codegangsta/martini"
@@ -14,9 +13,7 @@ import (
   "runtime"
 )
 
-
-var s_Logger logger.Logger = logger.NewLogger(logger.INFO | logger.DEBUG)
-
+var sLogger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
 func main() {
   numCPU := runtime.NumCPU()
@@ -49,5 +46,5 @@ func main() {
   m.Get("/api/players/", api.PlayersHandler)
   m.Get("/api/players/icon/:name.png", api.PlayerIconHandler)
   m.Get("/renewtiles/", app.RenewTilesHandler)
-  http.ListenAndServe(fmt.Sprintf("%s:%d", settings.WebServer.Host, settings.WebServer.Port) , m)
+  http.ListenAndServe(fmt.Sprintf("%s:%d", settings.WebServer.Host, settings.WebServer.Port), m)
 }

@@ -1,6 +1,5 @@
 package core
 
-
 import (
   "log"
   "os"
@@ -8,22 +7,22 @@ import (
   "strings"
 )
 
+// PlayerDir ...
+const PlayerDir = "players"
 
-const PLAYER_DIR = "players"
-
-
+// PlayerManager ...
 type PlayerManager struct {
-  m_WorldPath string
+  mWorldPath string
 }
 
-
-func NewPlayerManager(p_WorldPath string) *PlayerManager {
+// NewPlayerManager ...
+func NewPlayerManager(pWorldPath string) *PlayerManager {
   playerManager := PlayerManager{}
-  playerManager.m_WorldPath = p_WorldPath
+  playerManager.mWorldPath = pWorldPath
   return &playerManager
 }
 
-
+// GetPlayers ...
 func (p *PlayerManager) GetPlayers() []*Player {
   var players []*Player
   for _, name := range p.PlayerNames() {
@@ -32,15 +31,15 @@ func (p *PlayerManager) GetPlayers() []*Player {
   return players
 }
 
-
-func (p *PlayerManager) GetPlayer(p_Name string) *Player {
-  player := NewPlayer(p, p_Name).Player()
+// GetPlayer ...
+func (p *PlayerManager) GetPlayer(pName string) *Player {
+  player := NewPlayer(p, pName).Player()
   return player
 }
 
-
+// PlayerNames ...
 func (p *PlayerManager) PlayerNames() []string {
-  playersDir, err := os.Open(path.Join(p.m_WorldPath, PLAYER_DIR))
+  playersDir, err := os.Open(path.Join(p.mWorldPath, PlayerDir))
   if err != nil {
     log.Panic(err)
   }

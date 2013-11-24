@@ -1,6 +1,6 @@
 package nbt
 
-
+// TagNodeShort ...
 type TagNodeShort struct {
-  _data int16
+  mData int16
 }

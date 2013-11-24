@@ -1,6 +1,5 @@
 package core
 
-
 import (
   "encoding/xml"
   "fmt"
@@ -8,20 +7,21 @@ import (
   "os"
 )
 
-
+// Settings ...
 type Settings struct {
-  Theme string
-  WorldPath string
+  Theme      string
+  WorldPath  string
   NbtVersion string
-  WebServer WebServer
+  WebServer  WebServer
 }
 
+// WebServer ...
 type WebServer struct {
   Host string
   Port int
 }
 
-
+// LoadSettings ...
 func LoadSettings() (*Settings, error) {
   _, err := os.Stat("settings.xml")
   if err != nil {
@@ -41,7 +41,7 @@ func LoadSettings() (*Settings, error) {
   return &settings, nil
 }
 
-
+// CreateSettingsFile ...
 func CreateSettingsFile() error {
   file, err := os.Create("settings.xml")
   if err != nil {

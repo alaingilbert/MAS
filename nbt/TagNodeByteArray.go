@@ -1,11 +1,11 @@
 package nbt
 
-
+// TagNodeByteArray ...
 type TagNodeByteArray struct {
-  _data []byte
+  mData []byte
 }
 
-
+// Data ...
 func (t *TagNodeByteArray) Data() []byte {
-  return t._data
+  return t.mData
 }

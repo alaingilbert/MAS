@@ -1,38 +1,34 @@
 package draw
 
-
 import (
   "fmt"
   "mas/core"
 )
 
-
 // JobRenderRegionTile job that will render a region tile.
 type JobRenderRegionTile struct {
-  m_RegionX, m_RegionZ int
-  m_World *core.World
-  m_Theme *core.Theme
+  mRegionX, mRegionZ int
+  mWorld              *core.World
+  mTheme              *core.Theme
 }
 
-
 // NewJobRenderRegionTile will instantiate a job to render a region tile.
-// p_RegionX x axis coordinate of the region.
-// p_RegionZ z axis coordinate of the region.
-// p_World pointer to a minecraft world.
-// p_Theme color theme to be used.
+// pRegionX x axis coordinate of the region.
+// pRegionZ z axis coordinate of the region.
+// pWorld pointer to a minecraft world.
+// pTheme color theme to be used.
 // It returns a JobRenderRegionTile.
-func NewJobRenderRegionTile(p_RegionX, p_RegionZ int, p_World *core.World, p_Theme *core.Theme) JobRenderRegionTile {
-  job := JobRenderRegionTile{p_RegionX, p_RegionZ, p_World, p_Theme}
+func NewJobRenderRegionTile(pRegionX, pRegionZ int, pWorld *core.World, pTheme *core.Theme) JobRenderRegionTile {
+  job := JobRenderRegionTile{pRegionX, pRegionZ, pWorld, pTheme}
   return job
 }
 
-
 // Do is the function to be executed by the worker.
 func (j JobRenderRegionTile) Do() {
-  regionX := j.m_RegionX
-  regionZ := j.m_RegionZ
-  region := j.m_World.RegionManager().GetRegion(regionX, regionZ)
-  img := RenderRegionTile(region, j.m_Theme)
+  regionX := j.mRegionX
+  regionZ := j.mRegionZ
+  region := j.mWorld.RegionManager().GetRegion(regionX, regionZ)
+  img := RenderRegionTile(region, j.mTheme)
   Save("", fmt.Sprintf("tiles/r.%d.%d.png", regionX, regionZ), img)
-  s_Logger.Debug("End drawing", regionX, regionZ)
+  sLogger.Debug("End drawing", regionX, regionZ)
 }

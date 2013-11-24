@@ -1,6 +1,6 @@
 package nbt
 
-
+// TagNodeFloat ...
 type TagNodeFloat struct {
-  _data float32
+  mData float32
 }

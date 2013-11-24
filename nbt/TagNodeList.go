@@ -1,28 +1,28 @@
 package nbt
 
-
+// TagNodeList ...
 type TagNodeList struct {
-  _type TagType
-  m_Length int32
-  m_List []TagNode
+  mType   TagType
+  mLength int32
+  mList   []TagNode
 }
 
-
+// Length ...
 func (t *TagNodeList) Length() int32 {
-  return t.m_Length
+  return t.mLength
 }
 
-
+// Get ...
 func (t *TagNodeList) Get(i int) TagNode {
-  return t.m_List[i]
+  return t.mList[i]
 }
 
-
+// Add ...
 func (t *TagNodeList) Add(item TagNode, i int) {
-  t.m_List[i] = item
+  t.mList[i] = item
 }
 
-
+// ValueType ...
 func (t *TagNodeList) ValueType() TagType {
-  return t._type
+  return t.mType
 }

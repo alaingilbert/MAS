@@ -1,50 +1,45 @@
 package core
 
-
 import (
   "os"
 )
 
-
 // World represent a minecraft world.
 type World struct {
-  m_Path string
-  m_RegionManager *RegionManager
-  m_PlayerManager *PlayerManager
+  mPath          string
+  mRegionManager *RegionManager
+  mPlayerManager *PlayerManager
 }
-
 
 // NewWorld instantiate a world object.
 // It returns a pointer to a world.
-func NewWorld(p_Path string) *World {
+func NewWorld(pPath string) *World {
   world := &World{}
-  world.m_Path = p_Path
-  world.m_RegionManager = NewRegionManager(world.m_Path)
-  world.m_PlayerManager = NewPlayerManager(world.m_Path)
+  world.mPath = pPath
+  world.mRegionManager = NewRegionManager(world.mPath)
+  world.mPlayerManager = NewPlayerManager(world.mPath)
   return world
 }
 
-
+// PathValid ...
 func (w *World) PathValid() bool {
-  _, err := os.Stat(w.m_Path)
+  _, err := os.Stat(w.mPath)
   return err == nil
 }
-
 
 // Path get the path to the world directory.
 // It returns a path to the world directory.
 func (w *World) Path() string {
-  return w.m_Path
+  return w.mPath
 }
-
 
 // RegionManager get the region manager.
 // It returns a pointer to the region manager.
 func (w *World) RegionManager() *RegionManager {
-  return w.m_RegionManager
+  return w.mRegionManager
 }
 
-
+// PlayerManager ...
 func (w *World) PlayerManager() *PlayerManager {
-  return w.m_PlayerManager
+  return w.mPlayerManager
 }

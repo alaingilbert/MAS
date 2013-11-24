@@ -1,55 +1,49 @@
 package core
 
-
 import (
-  "path"
   "log"
   "os"
+  "path"
   "strconv"
   "strings"
 )
 
-
 // REGION_DIR name of the regions directory.
-const REGION_DIR = "region"
-
+const RegionDir = "region"
 
 // RegionManager is used to manage the regions.
 type RegionManager struct {
-  m_RegionPath string
+  mRegionPath string
 }
-
 
 // NewRegionManager instantiate a new region manager.
 // It returns a pointer to a region manager.
-func NewRegionManager(p_RegionPath string) *RegionManager {
+func NewRegionManager(pRegionPath string) *RegionManager {
   regionManager := &RegionManager{}
-  regionManager.m_RegionPath = p_RegionPath
+  regionManager.mRegionPath = pRegionPath
   return regionManager
 }
 
-
 // GetRegion get a specific region.
-// p_RegionX coordinate of the region on the X axis.
-// p_RegionZ coordinate of the region on the Z axis.
+// pRegionX coordinate of the region on the X axis.
+// pRegionZ coordinate of the region on the Z axis.
 // It returns a pointer to a region.
-func (r *RegionManager) GetRegion(p_RegionX, p_RegionZ int) *Region {
-  return NewRegion(r, p_RegionX, p_RegionZ)
+func (r *RegionManager) GetRegion(pRegionX, pRegionZ int) *Region {
+  return NewRegion(r, pRegionX, pRegionZ)
 }
-
 
 // GetRegionFromXYZ get a specific region from a global world coordinate.
-// p_X x world coordinate.
-// p_Y y world coordinate.
-// p_Z z world coordinate.
+// pX x world coordinate.
+// pY y world coordinate.
+// pZ z world coordinate.
 // It returns a pointer to a region.
-func (r *RegionManager) GetRegionFromXYZ(p_X, p_Y, p_Z int) *Region {
-  return NewRegionFromXYZ(r, p_X, p_Y, p_Z)
+func (r *RegionManager) GetRegionFromXYZ(pX, pY, pZ int) *Region {
+  return NewRegionFromXYZ(r, pX, pY, pZ)
 }
 
-
+// RegionFileNames ...
 func (r *RegionManager) RegionFileNames() []string {
-  tilesDirectory, err := os.Open(path.Join(r.m_RegionPath, REGION_DIR))
+  tilesDirectory, err := os.Open(path.Join(r.mRegionPath, RegionDir))
   if err != nil {
     log.Fatal(err)
   }
@@ -65,7 +59,7 @@ func (r *RegionManager) RegionFileNames() []string {
   return newFiles
 }
 
-
+// RegionsCoordinates ...
 func (r *RegionManager) RegionsCoordinates() [][2]int {
   files := r.RegionFileNames()
   result := make([][2]int, len(files))
@@ -79,9 +73,8 @@ func (r *RegionManager) RegionsCoordinates() [][2]int {
   return result
 }
 
-
 // RegionPath get the region folder path.
 // It returns the region folder path.
 func (r *RegionManager) RegionPath() string {
-  return r.m_RegionPath
+  return r.mRegionPath
 }

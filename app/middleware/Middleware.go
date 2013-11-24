@@ -1,6 +1,5 @@
 package middleware
 
-
 import (
   "fmt"
   "html/template"
@@ -11,9 +10,9 @@ import (
   "os"
 )
 
-
-func LicenseMiddleware(res http.ResponseWriter, req *http.Request, p_World *core.World) {
-  if !p_World.PathValid() {
+// LicenseMiddleware ...
+func LicenseMiddleware(res http.ResponseWriter, req *http.Request, pWorld *core.World) {
+  if !pWorld.PathValid() {
     io.WriteString(res, "World path invalid. Change your settings.xml")
     return
   }
@@ -32,12 +31,12 @@ func LicenseMiddleware(res http.ResponseWriter, req *http.Request, p_World *core
     }
 
     licInfos, err := license.Infos()
-    context := map[string] string {
-      "title": "Invalid License",
-      "licenseCreated": licInfos["Created"],
-      "licenseExpired": licInfos["Expired"],
+    context := map[string]string{
+      "title":            "Invalid License",
+      "licenseCreated":   licInfos["Created"],
+      "licenseExpired":   licInfos["Expired"],
       "licenseFirstName": licInfos["FirstName"],
-      "licenseLastName": licInfos["LastName"],
+      "licenseLastName":  licInfos["LastName"],
     }
     if err != nil {
       context["licenseErr"] = err.Error()

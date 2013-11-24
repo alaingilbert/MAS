@@ -1,4 +1,4 @@
 package nbt
 
-
-type TagNodeUnknown struct {}
+// TagNodeUnknown ...
+type TagNodeUnknown struct{}

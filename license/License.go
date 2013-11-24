@@ -1,33 +1,33 @@
 package license
 
-
 import (
-  "errors"
   "encoding/hex"
   "encoding/xml"
+  "errors"
   "fmt"
+  "io/ioutil"
   "mas/crypto"
   "mas/logger"
-  "io/ioutil"
   "strings"
   "time"
 )
 
+var sLogger = logger.NewLogger(logger.DEBUG)
 
-var s_Logger logger.Logger = logger.NewLogger(logger.DEBUG)
-
-
+// License ...
 type License struct {
   Created string
   Expired string
-  Owner Owner
+  Owner   Owner
 }
+
+// Owner ...
 type Owner struct {
   FirstName string
-  LastName string
+  LastName  string
 }
 
-
+// PrintLicenseInfos ...
 func PrintLicenseInfos() {
   license, _ := _DecryptLicense()
   licenseBytes := []byte(license)
@@ -43,17 +43,16 @@ func PrintLicenseInfos() {
   fmt.Println("--------------------------------------------------")
 }
 
+// IsValid ...
+var IsValid = false
 
-var IsValid bool = false
-
-
+// LicenseVerifier ...
 func LicenseVerifier() {
   c := time.Tick(1 * time.Second)
   for _ = range c {
     Verify()
   }
 }
-
 
 // Verify will tell you if the license file is valid and not expired.
 func Verify() bool {
@@ -70,11 +69,11 @@ func Verify() bool {
   return isValid
 }
 
-
+// Infos ...
 func Infos() (map[string]string, error) {
   license, err := _DecryptLicense()
   if err != nil {
-    return nil, errors.New("License file invalid.")
+    return nil, errors.New("license file invalid")
   }
   licenseBytes := []byte(license)
   var lic License
@@ -86,7 +85,6 @@ func Infos() (map[string]string, error) {
   res["LastName"] = lic.Owner.LastName
   return res, nil
 }
-
 
 // _DecryptLicense decrypt the license.key file.
 // It returns the license xml string.

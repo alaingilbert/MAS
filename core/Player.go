@@ -1,68 +1,67 @@
 package core
 
-
 import (
   "bytes"
   "compress/gzip"
   "fmt"
-  "mas/nbt"
   "io/ioutil"
+  "mas/nbt"
   "path"
   "strings"
 )
 
-
+// Player ...
 type Player struct {
-  m_PlayerManager *PlayerManager
-  m_Name string
-  m_X, m_Y, m_Z float64
+  mPlayerManager *PlayerManager
+  mName          string
+  mX, mY, mZ     float64
 }
 
-
-type PlayerJson struct {
-  Name string
+// PlayerJSON ...
+type PlayerJSON struct {
+  Name    string
   X, Y, Z float64
 }
 
-
-func (p *Player) ToJson() PlayerJson {
-  return PlayerJson{p.m_Name, p.m_X, p.m_Y, p.m_Z}
+// ToJSON ...
+func (p *Player) ToJSON() PlayerJSON {
+  return PlayerJSON{p.mName, p.mX, p.mY, p.mZ}
 }
 
-
-func NewPlayer(p_PlayerManager *PlayerManager, p_Name string) *Player {
+// NewPlayer ...
+func NewPlayer(pPlayerManager *PlayerManager, pName string) *Player {
   player := Player{}
-  player.m_PlayerManager = p_PlayerManager
-  player.m_Name = p_Name
+  player.mPlayerManager = pPlayerManager
+  player.mName = pName
   return &player
 }
 
-
+// FilePath ...
 func (p *Player) FilePath() string {
-  return path.Join(p.m_PlayerManager.m_WorldPath, PLAYER_DIR, p.m_Name + ".dat")
+  return path.Join(p.mPlayerManager.mWorldPath, PlayerDir, p.mName+".dat")
 }
 
-
+// X ...
 func (p *Player) X() float64 {
-  return p.m_X
+  return p.mX
 }
 
-
+// Y ...
 func (p *Player) Y() float64 {
-  return p.m_Y
+  return p.mY
 }
 
-
+// Z ...
 func (p *Player) Z() float64 {
-  return p.m_Z
+  return p.mZ
 }
 
-
+// Player ...
 func (p *Player) Player() *Player {
   filePath := p.FilePath()
   file, err := ioutil.ReadFile(filePath)
   if err != nil {
-    s_Logger.Debug(err)
+    sLogger.Debug(err)
     return nil
   }
   reader, err := gzip.NewReader(bytes.NewReader(file))
@@ -80,8 +79,8 @@ func (p *Player) Player() *Player {
   positionX := positionList.Get(0).(nbt.TagNodeDouble)
   positionY := positionList.Get(1).(nbt.TagNodeDouble)
   positionZ := positionList.Get(2).(nbt.TagNodeDouble)
-  p.m_X = positionX.Data()
-  p.m_Y = positionY.Data()
-  p.m_Z = positionZ.Data()
+  p.mX = positionX.Data()
+  p.mY = positionY.Data()
+  p.mZ = positionZ.Data()
   return p
 }

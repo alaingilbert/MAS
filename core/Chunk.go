@@ -1,37 +1,35 @@
 package core
 
-
 import (
   "mas/logger"
   "mas/nbt"
 )
 
+var sLogger = logger.NewLogger(logger.DEBUG)
 
-var s_Logger logger.Logger = logger.NewLogger(logger.DEBUG)
-
-
+// Chunk ...
 type Chunk struct {
-  m_LocalX, m_LocalZ int
-  m_Data nbt.NbtTree
+  mLocalX, mLocalZ int
+  mData             nbt.NbtTree
 }
 
-
-func NewChunk(p_LocalX, p_LocalZ int) *Chunk {
+// NewChunk ...
+func NewChunk(pLocalX, pLocalZ int) *Chunk {
   chunk := Chunk{}
-  chunk.m_LocalX = p_LocalX
-  chunk.m_LocalZ = p_LocalZ
+  chunk.mLocalX = pLocalX
+  chunk.mLocalZ = pLocalZ
   return &chunk
 }
 
-
-func (c *Chunk) SetData(p_Data nbt.NbtTree) {
-  c.m_Data = p_Data
+// SetData ...
+func (c *Chunk) SetData(pData nbt.NbtTree) {
+  c.mData = pData
 }
 
-
-func (c *Chunk) BlockId(p_X, p_Y, p_Z int) byte {
-  sectionY := p_Y / 16
-  sections := c.m_Data.Root().Entries["Level"].(nbt.TagNodeCompound).Entries["Sections"].(nbt.TagNodeList)
+// BlockID ...
+func (c *Chunk) BlockID(pX, pY, pZ int) byte {
+  sectionY := pY / 16
+  sections := c.mData.Root().Entries["Level"].(nbt.TagNodeCompound).Entries["Sections"].(nbt.TagNodeList)
 
   if int32(sectionY) >= sections.Length() {
     return 0
@@ -40,49 +38,45 @@ func (c *Chunk) BlockId(p_X, p_Y, p_Z int) byte {
   var section nbt.TagNode
   var blocks nbt.TagNodeByteArray
   var index int
-  var blockId byte
+  var blockID byte
 
-  validBlockId := false
-  for !validBlockId {
-    sectionY = p_Y / 16
+  validBlockID := false
+  for !validBlockID {
+    sectionY = pY / 16
     section = sections.Get(sectionY)
     blocks = section.(nbt.TagNodeCompound).Entries["Blocks"].(nbt.TagNodeByteArray)
-    index = (p_Y % 16) * 16 * 16 + p_Z * 16 + p_X
-    blockId = blocks.Data()[index]
-    if p_Y == 0 {
-      return blockId
+    index = (pY%16)*16*16 + pZ*16 + pX
+    blockID = blocks.Data()[index]
+    if pY == 0 {
+      return blockID
     }
-    if blockId != 38 && blockId != 37 && blockId != 59 && blockId != 0 &&
-       blockId != 102 && blockId != 85 && blockId != 139 && blockId != 20 && blockId != 141 &&
-       blockId != 142 && blockId != 106 && blockId != 66 && blockId != 55 && blockId != 115 &&
-       blockId != 83 && blockId != 104 && blockId != 105 && blockId != 140 && blockId != 68 &&
-       blockId != 64 && blockId != 65 && blockId != 107 && blockId != 132 && blockId != 69 &&
-       blockId != 63 && blockId != 32 && blockId != 27 && blockId != 77 && blockId != 143 &&
-       blockId != 71 && blockId != 117 && blockId != 95 && blockId != 160 {
-      validBlockId = true
+    if blockID != 38 && blockID != 37 && blockID != 59 && blockID != 0 &&
+      blockID != 102 && blockID != 85 && blockID != 139 && blockID != 20 && blockID != 141 &&
+      blockID != 142 && blockID != 106 && blockID != 66 && blockID != 55 && blockID != 115 &&
+      blockID != 83 && blockID != 104 && blockID != 105 && blockID != 140 && blockID != 68 &&
+      blockID != 64 && blockID != 65 && blockID != 107 && blockID != 132 && blockID != 69 &&
+      blockID != 63 && blockID != 32 && blockID != 27 && blockID != 77 && blockID != 143 &&
+      blockID != 71 && blockID != 117 && blockID != 95 && blockID != 160 {
+      validBlockID = true
     }
-    p_Y -= 1
+    pY -= 1
   }
-  return blockId
+  return blockID
 }
 
-
-
-
-
-func (c *Chunk) SectionY(p_SectionY int) {
+// SectionY ...
+func (c *Chunk) SectionY(pSectionY int) {
 }
 
-
+// Sections ...
 func (c *Chunk) Sections() {
-  
 }
 
-
+// HeightMap ...
 func (c *Chunk) HeightMap() []int32 {
   heightmap := make([]int32, 256)
-  if c.m_Data.Root().Entries["Level"] != nil {
-    heightmap = c.m_Data.Root().Entries["Level"].(nbt.TagNodeCompound).Entries["HeightMap"].(nbt.TagNodeIntArray).Data()
+  if c.mData.Root().Entries["Level"] != nil {
+    heightmap = c.mData.Root().Entries["Level"].(nbt.TagNodeCompound).Entries["HeightMap"].(nbt.TagNodeIntArray).Data()
   }
   return heightmap
 }

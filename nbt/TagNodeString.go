@@ -1,11 +1,11 @@
 package nbt
 
-
+// TagNodeString ...
 type TagNodeString struct {
-  _data string
+  mData string
 }
 
-
+// ToString ...
 func (t *TagNodeString) ToString() string {
-  return t._data
+  return t.mData
 }

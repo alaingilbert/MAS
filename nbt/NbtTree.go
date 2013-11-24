@@ -1,76 +1,78 @@
 package nbt
 
-
 import (
-  //"fmt"
-  "log"
-  "io"
-  "math"
   "encoding/binary"
+  "io"
+  "log"
   "mas/logger"
+  "math"
 )
 
-
+// NewNbtTree ...
 func NewNbtTree() NbtTree {
   tree := NbtTree{}
-  tree.m_Logger = logger.NewLogger(logger.INFO)
+  tree.mLogger = logger.NewLogger(logger.INFO)
   return tree
 }
 
-
+// NbtTree ...
 type NbtTree struct {
-  Stream io.Reader
-  _root TagNodeCompound
+  Stream    io.Reader
+  _root     TagNodeCompound
   _rootName string
-  m_Logger logger.Logger
+  mLogger   logger.Logger
 }
 
+// Root ...
 func (n *NbtTree) Root() TagNodeCompound {
-  n.m_Logger.Debug("Root")
+  n.mLogger.Debug("Root")
   return n._root
 }
 
+// Init ...
 func (n *NbtTree) Init(r io.Reader) {
-  n.m_Logger.Debug("Init")
+  n.mLogger.Debug("Init")
   n.Stream = r
   n._root = n.ReadRoot()
 }
 
+// ReadRoot ...
 func (n *NbtTree) ReadRoot() TagNodeCompound {
-  n.m_Logger.Debug("ReadRoot")
+  n.mLogger.Debug("ReadRoot")
   tagType := TagType(ReadByte(n.Stream))
-  if tagType == TAG_COMPOUND {
+  if tagType == TagCompound {
     n._rootName = ReadString(n.Stream)
     return n.ReadValue(tagType).(TagNodeCompound)
   }
   return TagNodeCompound{}
 }
 
+// ReadValue ...
 func (n *NbtTree) ReadValue(tagType TagType) TagNode {
-  n.m_Logger.Debug("ReadValue")
+  n.mLogger.Debug("ReadValue")
   //fmt.Println("-> (ReadValue)", tagType)
   switch tagType {
-  case TAG_BYTE:
+  case TagByte:
     return n.ReadByte()
-  case TAG_COMPOUND:
+  case TagCompound:
     return n.ReadCompound()
-  case TAG_LIST:
+  case TagList:
     return n.ReadList()
-  case TAG_BYTE_ARRAY:
+  case TagByteArray:
     return n.ReadByteArray()
-  case TAG_LONG:
+  case TagLong:
     return n.ReadLong()
-  case TAG_INT:
+  case TagInt:
     return n.ReadInt()
-  case TAG_INT_ARRAY:
+  case TagIntArray:
     return n.ReadIntArray()
-  case TAG_SHORT:
+  case TagShort:
     return n.ReadShort()
-  case TAG_FLOAT:
+  case TagFloat:
     return n.ReadFloat()
-  case TAG_DOUBLE:
+  case TagDouble:
     return n.ReadDouble()
-  case TAG_STRING:
+  case TagString:
     return n.ReadString()
   default:
     log.Println("Unknow TagNode", tagType)
@@ -78,33 +80,38 @@ func (n *NbtTree) ReadValue(tagType TagType) TagNode {
   }
 }
 
+// ReadFloat ...
 func (n *NbtTree) ReadFloat() TagNode {
-  n.m_Logger.Debug("ReadFloat")
+  n.mLogger.Debug("ReadFloat")
   val := TagNodeFloat{ReadFloat(n.Stream)}
   return val
 }
 
+// ReadString ...
 func (n *NbtTree) ReadString() TagNode {
-  n.m_Logger.Debug("ReadString")
+  n.mLogger.Debug("ReadString")
   str := ReadString(n.Stream)
   val := TagNodeString{str}
   return val
 }
 
+// ReadDouble ...
 func (n *NbtTree) ReadDouble() TagNode {
-  n.m_Logger.Debug("ReadDouble")
+  n.mLogger.Debug("ReadDouble")
   val := TagNodeDouble{ReadDouble(n.Stream)}
   return val
 }
 
+// ReadShort ...
 func (n *NbtTree) ReadShort() TagNode {
-  n.m_Logger.Debug("ReadShort")
+  n.mLogger.Debug("ReadShort")
   val := TagNodeShort{ReadShort(n.Stream)}
   return val
 }
 
+// ReadIntArray ...
 func (n *NbtTree) ReadIntArray() TagNode {
-  n.m_Logger.Debug("ReadIntArray")
+  n.mLogger.Debug("ReadIntArray")
   size := ReadInt(n.Stream)
   data := make([]int32, size)
   for i := int32(0); i < size; i++ {
@@ -115,27 +122,31 @@ func (n *NbtTree) ReadIntArray() TagNode {
   return val
 }
 
+// ReadByte ...
 func (n *NbtTree) ReadByte() TagNode {
-  n.m_Logger.Debug("ReadByte")
+  n.mLogger.Debug("ReadByte")
   val := TagNodeByte{ReadByte(n.Stream)}
   return val
 }
 
+// ReadInt ...
 func (n *NbtTree) ReadInt() TagNode {
-  n.m_Logger.Debug("ReadInt")
+  n.mLogger.Debug("ReadInt")
   val := TagNodeInt{ReadInt(n.Stream)}
   return val
 }
 
+// ReadLong ...
 func (n *NbtTree) ReadLong() TagNode {
-  n.m_Logger.Debug("ReadLong")
+  n.mLogger.Debug("ReadLong")
   long := ReadLong(n.Stream)
   val := TagNodeLong{long}
   return val
 }
 
+// ReadByteArray ...
 func (n *NbtTree) ReadByteArray() TagNode {
-  n.m_Logger.Debug("ReadByteArray")
+  n.mLogger.Debug("ReadByteArray")
   size := ReadInt(n.Stream)
   if size < 0 {
     log.Fatal("Read Neg")
@@ -147,14 +158,15 @@ func (n *NbtTree) ReadByteArray() TagNode {
   return val
 }
 
+// ReadList ...
 func (n *NbtTree) ReadList() TagNode {
-  n.m_Logger.Debug("ReadList")
-  tagId := TagType(ReadByte(n.Stream))
+  n.mLogger.Debug("ReadList")
+  tagID := TagType(ReadByte(n.Stream))
   length := ReadInt(n.Stream)
   list := make([]TagNode, length)
-  val := TagNodeList{tagId, length, list}
-  if val.ValueType() == TAG_END {
-    return TagNodeList{TAG_BYTE, length, list}
+  val := TagNodeList{tagID, length, list}
+  if val.ValueType() == TagEnd {
+    return TagNodeList{TagByte, length, list}
   }
   for i := 0; int32(i) < length; i++ {
     val.Add(n.ReadValue(val.ValueType()), i)
@@ -162,18 +174,21 @@ func (n *NbtTree) ReadList() TagNode {
   return val
 }
 
+// ReadCompound ...
 func (n *NbtTree) ReadCompound() TagNode {
-  n.m_Logger.Debug("ReadCompound")
+  n.mLogger.Debug("ReadCompound")
   val := TagNodeCompound{make(map[string]TagNode)}
-  for n.ReadTag(val) {}
+  for n.ReadTag(val) {
+  }
   return val
 }
 
+// ReadTag ...
 func (n *NbtTree) ReadTag(parent TagNodeCompound) bool {
-  n.m_Logger.Debug("ReadTag")
+  n.mLogger.Debug("ReadTag")
   tagType := TagType(ReadByte(n.Stream))
   //fmt.Println("-> (ReadTag)", tagType)
-  if tagType != TAG_END {
+  if tagType != TagEnd {
     name := ReadString(n.Stream)
     value := n.ReadValue(tagType)
     //fmt.Println(name, value)
@@ -183,6 +198,7 @@ func (n *NbtTree) ReadTag(parent TagNodeCompound) bool {
   return false
 }
 
+// ReadByte ...
 func ReadByte(r io.Reader) (i byte) {
   b := make([]byte, 1)
   r.Read(b)
@@ -190,47 +206,55 @@ func ReadByte(r io.Reader) (i byte) {
   return
 }
 
+// ReadShort ...
 func ReadShort(r io.Reader) (i int16) {
   binary.Read(r, binary.BigEndian, &i)
   return
 }
- 
+
+// ReadInt ...
 func ReadInt(r io.Reader) (i int32) {
   binary.Read(r, binary.BigEndian, &i)
   return
 }
- 
+
+// ReadLong ...
 func ReadLong(r io.Reader) (i int64) {
   binary.Read(r, binary.BigEndian, &i)
   return
 }
- 
+
+// ReadFloat ...
 func ReadFloat(r io.Reader) (i float32) {
   b := make([]byte, 4)
   r.Read(b)
   i = math.Float32frombits(binary.BigEndian.Uint32(b))
   return
 }
- 
+
+// ReadDouble ...
 func ReadDouble(r io.Reader) (i float64) {
   b := make([]byte, 8)
   r.Read(b)
   i = math.Float64frombits(binary.BigEndian.Uint64(b))
   return
 }
- 
+
+// ReadByteArray ...
 func ReadByteArray(r io.Reader) (i []byte) {
   i = make([]byte, ReadInt(r))
   r.Read(i)
   return
 }
- 
+
+// ReadString ...
 func ReadString(r io.Reader) string {
   result := make([]byte, ReadShort(r))
   r.Read(result)
   return string(result)
 }
- 
+
+// ReadIntArray ...
 func ReadIntArray(r io.Reader) (list []int32) {
   length := int(ReadInt(r))
   for i := 0; i < length; i++ {

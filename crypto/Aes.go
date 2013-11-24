@@ -1,20 +1,17 @@
 package crypto
 
-
 import (
-  "fmt"
   "crypto/aes"
   "crypto/cipher"
   "crypto/rand"
   "encoding/base64"
+  "fmt"
   "io"
 )
-
 
 func encodeBase64(b []byte) string {
   return base64.StdEncoding.EncodeToString(b)
 }
-
 
 func decodeBase64(s string) []byte {
   data, err := base64.StdEncoding.DecodeString(s)
@@ -24,7 +21,7 @@ func decodeBase64(s string) []byte {
   return data
 }
 
-
+// Encrypt ...
 func Encrypt(key, text []byte) []byte {
   block, err := aes.NewCipher(key)
   if err != nil {
@@ -41,7 +38,7 @@ func Encrypt(key, text []byte) []byte {
   return ciphertext
 }
 
-
+// Decrypt ...
 func Decrypt(key, text []byte) (string, error) {
   block, err := aes.NewCipher(key)
   if err != nil {

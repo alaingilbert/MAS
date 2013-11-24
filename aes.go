@@ -5,10 +5,10 @@ import (
   "crypto/cipher"
   "crypto/rand"
   "encoding/base64"
+  "encoding/hex"
   "fmt"
   "io"
   "io/ioutil"
-  "encoding/hex"
 )
 
 func main() {
