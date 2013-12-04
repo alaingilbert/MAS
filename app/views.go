@@ -43,10 +43,18 @@ func LicenseHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 // ThemeHandler ...
-func ThemeHandler(res http.ResponseWriter, req *http.Request) {
-  context := map[string]string{}
+func ThemeHandler(res http.ResponseWriter, req *http.Request, theme *core.Theme) {
+  if req.Method == "POST" {
+    fmt.Println(req.Form)
+    fmt.Println(req.PostForm)
+    req.ParseForm()
+    fmt.Println(req.Form)
+    fmt.Println(req.PostForm)
+  }
+  context := map[string]interface{}{}
+  context["Theme"] = theme
   tmpl, _ := template.ParseFiles("public/templates/theme.html")
-  tmpl.Execute(res, context)
+  tmpl.Execute(res, theme.GetMap())
 }
 
 // TileHandler ...

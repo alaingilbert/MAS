@@ -1,10 +1,11 @@
 <!doctype html>
 <html>
   <head>
-    <title>{{.title}}</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/spectrum.css" />
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/spectrum.js"></script>
     <style>
       .container {
         padding-left: 15px;
@@ -17,12 +18,23 @@
     <div class="container">
       <div class="page-header">
         <h1>Theme editor</h1>
-      </div>
-      <form method="post">
-        <textarea name="license" class="form-control" rows="5"></textarea><br />
+        <form method="post">
+        </div>
+        {{range .}}
+          <div>
+          <input id="_{{.ID}}" type="text">
+          {{.Name}} ({{.ID}})
+          </div>
+        {{end}}
         <button type="submit" class="btn btn-success">Validate</button>
       </form>
     </div>
+
+  <script>
+  {{range .}}
+  $("#_{{.ID}}").spectrum({color: "rgba({{.Red}},{{.Green}},{{.Blue}},{{.Alpha}})", showAlpha: true, showInput: true});
+  {{end}}
+  </script>
 
   </body>
 </html>

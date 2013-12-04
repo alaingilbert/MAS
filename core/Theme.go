@@ -13,11 +13,12 @@ type Query struct {
 
 // Block ...
 type Block struct {
-  ID    byte  `xml:"id,attr"`
-  Red   uint8 `xml:"red,attr"`
-  Green uint8 `xml:"green,attr"`
-  Blue  uint8 `xml:"blue,attr"`
-  Alpha uint8 `xml:"alpha,attr"`
+  ID    byte   `xml:"id,attr"`
+  Red   uint8  `xml:"red,attr"`
+  Green uint8  `xml:"green,attr"`
+  Blue  uint8  `xml:"blue,attr"`
+  Alpha uint8  `xml:"alpha,attr"`
+  Name  string `xml:"name,attr"`
 }
 
 // Theme ...
@@ -60,4 +61,9 @@ func (t *Theme) LoadTheme() {
 // GetByID ...
 func (t *Theme) GetByID(pID byte) Block {
   return t.mMap[pID]
+}
+
+// GetMap ...
+func (t *Theme) GetMap() map[byte]Block {
+  return t.mMap
 }

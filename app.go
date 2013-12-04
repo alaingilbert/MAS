@@ -43,6 +43,7 @@ func main() {
   m.Get("/tile/:z/:x/:y.png", app.TileHandler)
   m.Get("/license/", app.LicenseHandler)
   m.Get("/theme/", app.ThemeHandler)
+  m.Post("/theme/", app.ThemeHandler)
   m.Get("/api/players/", api.PlayersHandler)
   m.Get("/api/players/icon/:name.png", api.PlayerIconHandler)
   m.Get("/renewtiles/", app.RenewTilesHandler)
