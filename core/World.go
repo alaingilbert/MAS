@@ -6,7 +6,7 @@ import (
 
 // World represent a minecraft world.
 type World struct {
-  mPath          string
+  Path           string
   mRegionManager *RegionManager
   mPlayerManager *PlayerManager
 }
@@ -15,22 +15,16 @@ type World struct {
 // It returns a pointer to a world.
 func NewWorld(pPath string) *World {
   world := &World{}
-  world.mPath = pPath
-  world.mRegionManager = NewRegionManager(world.mPath)
-  world.mPlayerManager = NewPlayerManager(world.mPath)
+  world.Path = pPath
+  world.mRegionManager = NewRegionManager(world.Path)
+  world.mPlayerManager = NewPlayerManager(world.Path)
   return world
 }
 
 // PathValid ...
 func (w *World) PathValid() bool {
-  _, err := os.Stat(w.mPath)
+  _, err := os.Stat(w.Path)
   return err == nil
-}
-
-// Path get the path to the world directory.
-// It returns a path to the world directory.
-func (w *World) Path() string {
-  return w.mPath
 }
 
 // RegionManager get the region manager.

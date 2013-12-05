@@ -18,19 +18,27 @@
     <div class="container">
       <div class="page-header">
         <h1>Theme editor</h1>
-        <form method="post">
-        </div>
+      </div>
+      <form id="myform" method="post">
+        <div style="-webkit-column-count: 4;">
         {{range .}}
           <div>
-          <input id="_{{.ID}}" type="text">
-          {{.Name}} ({{.ID}})
+            <input name="_{{.ID}}" id="_{{.ID}}" type="text">
+            {{.Name}} ({{.ID}})
           </div>
         {{end}}
+        </div>
         <button type="submit" class="btn btn-success">Validate</button>
       </form>
     </div>
 
   <script>
+    $("#myform").submit(function() {
+      {{range .}}
+      $("#_{{.ID}}").val($("#_{{.ID}}").spectrum("get").toRgbString());
+      {{end}}
+    });
+
   {{range .}}
   $("#_{{.ID}}").spectrum({color: "rgba({{.Red}},{{.Green}},{{.Blue}},{{.Alpha}})", showAlpha: true, showInput: true});
   {{end}}

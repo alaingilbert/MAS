@@ -2,6 +2,7 @@ package middleware
 
 import (
   "fmt"
+  "github.com/codegangsta/martini-contrib/sessions"
   "html/template"
   "io"
   "mas/core"
@@ -11,9 +12,11 @@ import (
 )
 
 // LicenseMiddleware ...
-func LicenseMiddleware(res http.ResponseWriter, req *http.Request, pWorld *core.World) {
-  if !pWorld.PathValid() {
-    io.WriteString(res, "World path invalid. Change your settings.xml")
+func LicenseMiddleware(res http.ResponseWriter, req *http.Request, pWorld *core.World, session sessions.Session) {
+  // World path invalid, change your settings.xml
+  if !pWorld.PathValid() && req.URL.Path != "/settings/" {
+    session.AddFlash("World path is invalid.")
+    http.Redirect(res, req, "/settings/", http.StatusFound)
     return
   }
   if !license.IsValid {

@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/spectrum.css" />
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/spectrum.js"></script>
+    <style>
+      .container {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="page-header">
+        <h1>Settings editor</h1>
+      </div>
+
+      {{if .Flash}}
+      {{range .Flash}}
+      <div class="panel panel-success">
+        <div class="panel-heading">
+          {{.}}
+        </div>
+      </div>
+      {{end}}
+      {{end}}
+
+      <form id="myform" method="post" class="form-horizontal">
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">World path:</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{.Settings.WorldPath}}" class="form-control" name="WorldPath" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Theme:</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{.Settings.Theme}}" class="form-control" name="Theme" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Nbt version:</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{.Settings.NbtVersion}}" class="form-control" name="NbtVersion" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Host:</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{.Settings.WebServer.Host}}" class="form-control" name="Host" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Port:</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{.Settings.WebServer.Port}}" class="form-control" name="Port" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-success">Save</button>
+            <button type="submit" class="btn btn-danger">Cancel</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+  </body>
+</html>
