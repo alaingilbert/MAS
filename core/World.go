@@ -14,7 +14,7 @@ type World struct {
 // NewWorld instantiate a world object.
 // It returns a pointer to a world.
 func NewWorld(pPath string) *World {
-  world := &World{}
+  world := new(World)
   world.Path = pPath
   world.mRegionManager = NewRegionManager(world.Path)
   world.mPlayerManager = NewPlayerManager(world.Path)

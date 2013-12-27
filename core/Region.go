@@ -27,23 +27,23 @@ type Region struct {
 // pZ region Z axis.
 // It returns a pointer to the region.
 func NewRegion(pRegionManager *RegionManager, pRegionX, pRegionZ int) *Region {
-  region := Region{}
+  region := new(Region)
   region.mRegionManager = pRegionManager
   region.mX = pRegionX
   region.mZ = pRegionZ
   region.mFile = nil
-  return &region
+  return region
 }
 
 // NewRegionFromXYZ ...
 func NewRegionFromXYZ(pRegionManager *RegionManager, pX, pY, pZ int) *Region {
-  region := Region{}
+  region := new(Region)
   regionX, regionZ := region.RegionCoordinatesFromXYZ(pX, pY, pZ)
   region.mRegionManager = pRegionManager
   region.mX = regionX
   region.mZ = regionZ
   region.mFile = nil
-  return &region
+  return region
 }
 
 // RegionCoordinatesFromXYZ ...
@@ -124,13 +124,12 @@ func (r *Region) GetChunk(pLocalX, pLocalZ int) *Chunk {
         log.Fatal(err)
       }
       defer reader.Close()
-      tree := nbt.NewNbtTree()
 
       buf := new(bytes.Buffer)
       buf.ReadFrom(reader)
       s := buf.String()
       re := strings.NewReader(s)
-      tree.Init(re)
+      tree := nbt.NewNbtTree(re)
       chunk := NewChunk(pLocalX, pLocalZ)
       chunk.SetData(tree)
       return chunk

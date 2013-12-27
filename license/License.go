@@ -6,6 +6,7 @@ import (
   "errors"
   "fmt"
   "io/ioutil"
+  "log"
   "mas/crypto"
   "strings"
   "time"
@@ -45,7 +46,8 @@ var IsValid = false
 
 // LicenseVerifier ...
 func LicenseVerifier() {
-  c := time.Tick(1 * time.Second)
+  Verify()
+  c := time.Tick(1 * time.Hour)
   for _ = range c {
     Verify()
   }
@@ -55,6 +57,8 @@ func LicenseVerifier() {
 func Verify() bool {
   license, err := _DecryptLicense()
   if err != nil {
+    log.Println(err)
+    IsValid = false
     return false
   }
   licenseBytes := []byte(license)

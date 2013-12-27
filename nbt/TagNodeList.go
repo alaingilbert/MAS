@@ -4,7 +4,11 @@ package nbt
 type TagNodeList struct {
   mType   TagType
   mLength int32
-  mList   []TagNode
+  mList   []ITagNode
+}
+
+func NewTagNodeList(pType TagType, pLength int32, pList []ITagNode) *TagNodeList {
+  return &TagNodeList{pType, pLength, pList}
 }
 
 // Length ...
@@ -13,12 +17,12 @@ func (t *TagNodeList) Length() int32 {
 }
 
 // Get ...
-func (t *TagNodeList) Get(i int) TagNode {
+func (t *TagNodeList) Get(i int) ITagNode {
   return t.mList[i]
 }
 
 // Add ...
-func (t *TagNodeList) Add(item TagNode, i int) {
+func (t *TagNodeList) Add(item ITagNode, i int) {
   t.mList[i] = item
 }
 

@@ -8,41 +8,37 @@ import (
 )
 
 // NewNbtTree ...
-func NewNbtTree() NbtTree {
-  tree := NbtTree{}
+func NewNbtTree(r io.Reader) *NbtTree {
+  tree := new(NbtTree)
+  tree.Stream = r
+  tree._root = tree.ReadRoot()
   return tree
 }
 
 // NbtTree ...
 type NbtTree struct {
   Stream    io.Reader
-  _root     TagNodeCompound
+  _root     *TagNodeCompound
   _rootName string
 }
 
 // Root ...
-func (n *NbtTree) Root() TagNodeCompound {
+func (n *NbtTree) Root() *TagNodeCompound {
   return n._root
 }
 
-// Init ...
-func (n *NbtTree) Init(r io.Reader) {
-  n.Stream = r
-  n._root = n.ReadRoot()
-}
-
 // ReadRoot ...
-func (n *NbtTree) ReadRoot() TagNodeCompound {
+func (n *NbtTree) ReadRoot() *TagNodeCompound {
   tagType := TagType(ReadByte(n.Stream))
   if tagType == TagCompound {
     n._rootName = ReadString(n.Stream)
-    return n.ReadValue(tagType).(TagNodeCompound)
+    return n.ReadValue(tagType).(*TagNodeCompound)
   }
-  return TagNodeCompound{}
+  return new(TagNodeCompound)
 }
 
 // ReadValue ...
-func (n *NbtTree) ReadValue(tagType TagType) TagNode {
+func (n *NbtTree) ReadValue(tagType TagType) ITagNode {
   //fmt.Println("-> (ReadValue)", tagType)
   switch tagType {
   case TagByte:
@@ -74,63 +70,63 @@ func (n *NbtTree) ReadValue(tagType TagType) TagNode {
 }
 
 // ReadFloat ...
-func (n *NbtTree) ReadFloat() TagNode {
-  val := TagNodeFloat{ReadFloat(n.Stream)}
+func (n *NbtTree) ReadFloat() ITagNode {
+  val := NewTagNodeFloat(ReadFloat(n.Stream))
   return val
 }
 
 // ReadString ...
-func (n *NbtTree) ReadString() TagNode {
+func (n *NbtTree) ReadString() ITagNode {
   str := ReadString(n.Stream)
-  val := TagNodeString{str}
+  val := NewTagNodeString(str)
   return val
 }
 
 // ReadDouble ...
-func (n *NbtTree) ReadDouble() TagNode {
-  val := TagNodeDouble{ReadDouble(n.Stream)}
+func (n *NbtTree) ReadDouble() ITagNode {
+  val := NewTagNodeDouble(ReadDouble(n.Stream))
   return val
 }
 
 // ReadShort ...
-func (n *NbtTree) ReadShort() TagNode {
-  val := TagNodeShort{ReadShort(n.Stream)}
+func (n *NbtTree) ReadShort() ITagNode {
+  val := NewTagNodeShort(ReadShort(n.Stream))
   return val
 }
 
 // ReadIntArray ...
-func (n *NbtTree) ReadIntArray() TagNode {
+func (n *NbtTree) ReadIntArray() ITagNode {
   size := ReadInt(n.Stream)
   data := make([]int32, size)
   for i := int32(0); i < size; i++ {
     tmpInt := ReadInt(n.Stream)
     data[i] = tmpInt
   }
-  val := TagNodeIntArray{data}
+  val := NewTagNodeIntArray(data)
   return val
 }
 
 // ReadByte ...
-func (n *NbtTree) ReadByte() TagNode {
-  val := TagNodeByte{ReadByte(n.Stream)}
+func (n *NbtTree) ReadByte() ITagNode {
+  val := NewTagNodeByte(ReadByte(n.Stream))
   return val
 }
 
 // ReadInt ...
-func (n *NbtTree) ReadInt() TagNode {
-  val := TagNodeInt{ReadInt(n.Stream)}
+func (n *NbtTree) ReadInt() ITagNode {
+  val := NewTagNodeInt(ReadInt(n.Stream))
   return val
 }
 
 // ReadLong ...
-func (n *NbtTree) ReadLong() TagNode {
+func (n *NbtTree) ReadLong() ITagNode {
   long := ReadLong(n.Stream)
-  val := TagNodeLong{long}
+  val := NewTagNodeLong(long)
   return val
 }
 
 // ReadByteArray ...
-func (n *NbtTree) ReadByteArray() TagNode {
+func (n *NbtTree) ReadByteArray() ITagNode {
   size := ReadInt(n.Stream)
   if size < 0 {
     log.Fatal("Read Neg")
@@ -138,18 +134,18 @@ func (n *NbtTree) ReadByteArray() TagNode {
   data := make([]byte, size)
   n.Stream.Read(data)
 
-  val := TagNodeByteArray{data}
+  val := NewTagNodeByteArray(data)
   return val
 }
 
 // ReadList ...
-func (n *NbtTree) ReadList() TagNode {
+func (n *NbtTree) ReadList() ITagNode {
   tagID := TagType(ReadByte(n.Stream))
   length := ReadInt(n.Stream)
-  list := make([]TagNode, length)
-  val := TagNodeList{tagID, length, list}
+  list := make([]ITagNode, length)
+  val := NewTagNodeList(tagID, length, list)
   if val.ValueType() == TagEnd {
-    return TagNodeList{TagByte, length, list}
+    return NewTagNodeList(TagByte, length, list)
   }
   for i := 0; int32(i) < length; i++ {
     val.Add(n.ReadValue(val.ValueType()), i)
@@ -158,21 +154,19 @@ func (n *NbtTree) ReadList() TagNode {
 }
 
 // ReadCompound ...
-func (n *NbtTree) ReadCompound() TagNode {
-  val := TagNodeCompound{make(map[string]TagNode)}
+func (n *NbtTree) ReadCompound() ITagNode {
+  val := NewTagNodeCompound(make(map[string]ITagNode))
   for n.ReadTag(val) {
   }
   return val
 }
 
 // ReadTag ...
-func (n *NbtTree) ReadTag(parent TagNodeCompound) bool {
+func (n *NbtTree) ReadTag(parent *TagNodeCompound) bool {
   tagType := TagType(ReadByte(n.Stream))
-  //fmt.Println("-> (ReadTag)", tagType)
   if tagType != TagEnd {
     name := ReadString(n.Stream)
     value := n.ReadValue(tagType)
-    //fmt.Println(name, value)
     parent.Entries[name] = value
     return true
   }

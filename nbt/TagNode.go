@@ -1,5 +1,5 @@
 package nbt
 
 // TagNode ...
-type TagNode interface {
+type ITagNode interface {
 }
