@@ -2,5 +2,10 @@ package nbt
 
 // TagNodeShort ...
 type TagNodeShort struct {
-  mData int16
+  Data int16
+}
+
+// NewTagNodeShort ...
+func NewTagNodeShort(data int16) *TagNodeShort {
+  return &TagNodeShort{data}
 }

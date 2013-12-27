@@ -30,10 +30,10 @@ type Theme struct {
 
 // NewTheme ...
 func NewTheme(pTheme string) *Theme {
-  theme := Theme{}
+  theme := new(Theme)
   theme.mTheme = pTheme
   theme.LoadTheme()
-  return &theme
+  return theme
 }
 
 // Reload ...

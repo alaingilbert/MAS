@@ -18,7 +18,7 @@ type WorkerPool struct {
 // pNbWorker number of worker to spawn.
 // It returns a pointer to the pool.
 func NewWorkerPool(pNbWorker int) *WorkerPool {
-  workerPool := WorkerPool{}
+  workerPool := new(WorkerPool)
   workerPool.mNbWorker = pNbWorker
   workerPool.mWaitGroup = new(sync.WaitGroup)
   workerPool.mChannelIn = make(chan IJob)
@@ -28,7 +28,7 @@ func NewWorkerPool(pNbWorker int) *WorkerPool {
     go Worker(i, workerPool.mWaitGroup, workerPool.mChannelIn)
   }
 
-  return &workerPool
+  return workerPool
 }
 
 // Do give a job to one of the worker.

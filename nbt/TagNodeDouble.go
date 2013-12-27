@@ -2,10 +2,11 @@ package nbt
 
 // TagNodeDouble ...
 type TagNodeDouble struct {
-  mData float64
+  Data float64
 }
 
-// Data ...
-func (t *TagNodeDouble) Data() float64 {
-  return t.mData
+// NewTagNodeDouble ...
+func NewTagNodeDouble(data float64) *TagNodeDouble {
+  tagNode := &TagNodeDouble{data}
+  return tagNode
 }

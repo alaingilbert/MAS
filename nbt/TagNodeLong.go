@@ -2,5 +2,10 @@ package nbt
 
 // TagNodeLong ...
 type TagNodeLong struct {
-  mData int64
+  Data int64
+}
+
+// NewTagNodeLong ...
+func NewTagNodeLong(data int64) *TagNodeLong {
+  return &TagNodeLong{data}
 }

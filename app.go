@@ -18,7 +18,6 @@ func main() {
   runtime.GOMAXPROCS(numCPU)
 
   // Load license
-  license.Verify()
   go license.LicenseVerifier()
   license.PrintLicenseInfos()
 
@@ -51,5 +50,6 @@ func main() {
   m.Get("/api/players/", api.PlayersHandler)
   m.Get("/api/players/icon/:name.png", api.PlayerIconHandler)
   m.Get("/renewtiles/", app.RenewTilesHandler)
+  fmt.Println(fmt.Sprintf("Start listening on %s:%d", settings.WebServer.Host, settings.WebServer.Port))
   http.ListenAndServe(fmt.Sprintf("%s:%d", settings.WebServer.Host, settings.WebServer.Port), m)
 }

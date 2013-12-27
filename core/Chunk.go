@@ -7,33 +7,33 @@ import (
 // Chunk ...
 type Chunk struct {
   mLocalX, mLocalZ int
-  mData            nbt.NbtTree
+  mData            *nbt.NbtTree
 }
 
 // NewChunk ...
 func NewChunk(pLocalX, pLocalZ int) *Chunk {
-  chunk := Chunk{}
+  chunk := new(Chunk)
   chunk.mLocalX = pLocalX
   chunk.mLocalZ = pLocalZ
-  return &chunk
+  return chunk
 }
 
 // SetData ...
-func (c *Chunk) SetData(pData nbt.NbtTree) {
+func (c *Chunk) SetData(pData *nbt.NbtTree) {
   c.mData = pData
 }
 
 // BlockID ...
 func (c *Chunk) BlockID(pX, pY, pZ int) byte {
   sectionY := pY / 16
-  sections := c.mData.Root().Entries["Level"].(nbt.TagNodeCompound).Entries["Sections"].(nbt.TagNodeList)
+  sections := c.mData.Root().Entries["Level"].(*nbt.TagNodeCompound).Entries["Sections"].(*nbt.TagNodeList)
 
   if int32(sectionY) >= sections.Length() {
     return 0
   }
 
-  var section nbt.TagNode
-  var blocks nbt.TagNodeByteArray
+  var section nbt.ITagNode
+  var blocks *nbt.TagNodeByteArray
   var index int
   var blockID byte
 
@@ -41,7 +41,7 @@ func (c *Chunk) BlockID(pX, pY, pZ int) byte {
   for !validBlockID {
     sectionY = pY / 16
     section = sections.Get(sectionY)
-    blocks = section.(nbt.TagNodeCompound).Entries["Blocks"].(nbt.TagNodeByteArray)
+    blocks = section.(*nbt.TagNodeCompound).Entries["Blocks"].(*nbt.TagNodeByteArray)
     index = (pY%16)*16*16 + pZ*16 + pX
     blockID = blocks.Data()[index]
     if pY == 0 {
@@ -73,7 +73,7 @@ func (c *Chunk) Sections() {
 func (c *Chunk) HeightMap() []int32 {
   heightmap := make([]int32, 256)
   if c.mData.Root().Entries["Level"] != nil {
-    heightmap = c.mData.Root().Entries["Level"].(nbt.TagNodeCompound).Entries["HeightMap"].(nbt.TagNodeIntArray).Data()
+    heightmap = c.mData.Root().Entries["Level"].(*nbt.TagNodeCompound).Entries["HeightMap"].(*nbt.TagNodeIntArray).Data()
   }
   return heightmap
 }

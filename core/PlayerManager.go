@@ -17,9 +17,9 @@ type PlayerManager struct {
 
 // NewPlayerManager ...
 func NewPlayerManager(pWorldPath string) *PlayerManager {
-  playerManager := PlayerManager{}
+  playerManager := new(PlayerManager)
   playerManager.mWorldPath = pWorldPath
-  return &playerManager
+  return playerManager
 }
 
 // GetPlayers ...

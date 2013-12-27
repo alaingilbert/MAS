@@ -2,5 +2,10 @@ package nbt
 
 // TagNodeByte ...
 type TagNodeByte struct {
-  _data byte
+  mData byte
+}
+
+// NewTagNodeByte ...
+func NewTagNodeByte(data byte) *TagNodeByte {
+  return &TagNodeByte{data}
 }

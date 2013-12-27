@@ -30,10 +30,10 @@ func (p *Player) ToJSON() PlayerJSON {
 
 // NewPlayer ...
 func NewPlayer(pPlayerManager *PlayerManager, pName string) *Player {
-  player := Player{}
+  player := new(Player)
   player.mPlayerManager = pPlayerManager
   player.mName = pName
-  return &player
+  return player
 }
 
 // FilePath ...
@@ -72,14 +72,13 @@ func (p *Player) Player() *Player {
   buf.ReadFrom(reader)
   s := buf.String()
   re := strings.NewReader(s)
-  tree := nbt.NewNbtTree()
-  tree.Init(re)
-  positionList := tree.Root().Entries["Pos"].(nbt.TagNodeList)
-  positionX := positionList.Get(0).(nbt.TagNodeDouble)
-  positionY := positionList.Get(1).(nbt.TagNodeDouble)
-  positionZ := positionList.Get(2).(nbt.TagNodeDouble)
-  p.mX = positionX.Data()
-  p.mY = positionY.Data()
-  p.mZ = positionZ.Data()
+  tree := nbt.NewNbtTree(re)
+  positionList := tree.Root().Entries["Pos"].(*nbt.TagNodeList)
+  positionX := positionList.Get(0).(*nbt.TagNodeDouble)
+  positionY := positionList.Get(1).(*nbt.TagNodeDouble)
+  positionZ := positionList.Get(2).(*nbt.TagNodeDouble)
+  p.mX = positionX.Data
+  p.mY = positionY.Data
+  p.mZ = positionZ.Data
   return p
 }
