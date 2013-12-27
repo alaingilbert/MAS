@@ -61,7 +61,6 @@ func (p *Player) Player() *Player {
   filePath := p.FilePath()
   file, err := ioutil.ReadFile(filePath)
   if err != nil {
-    sLogger.Debug(err)
     return nil
   }
   reader, err := gzip.NewReader(bytes.NewReader(file))

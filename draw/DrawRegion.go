@@ -6,12 +6,9 @@ import (
   "image/color"
   "image/png"
   "mas/core"
-  "mas/logger"
   "math"
   "os"
 )
-
-var sLogger = logger.NewLogger(logger.DEBUG)
 
 // CreateImage ...
 func CreateImage(pSizeX, pSizeZ int) *image.RGBA {

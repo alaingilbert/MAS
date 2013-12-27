@@ -1,16 +1,13 @@
 package core
 
 import (
-  "mas/logger"
   "mas/nbt"
 )
-
-var sLogger = logger.NewLogger(logger.DEBUG)
 
 // Chunk ...
 type Chunk struct {
   mLocalX, mLocalZ int
-  mData             nbt.NbtTree
+  mData            nbt.NbtTree
 }
 
 // NewChunk ...

@@ -3,6 +3,7 @@ package core
 import (
   "encoding/xml"
   "io/ioutil"
+  "log"
   "os"
 )
 
@@ -44,7 +45,7 @@ func (t *Theme) Reload() {
 func (t *Theme) LoadTheme() {
   xmlFile, err := os.Open("public/themes/default/theme.xml")
   if err != nil {
-    sLogger.Fatal("Cant load theme file", err)
+    log.Fatalf("Cant load theme file", err)
   }
   defer xmlFile.Close()
 

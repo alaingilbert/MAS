@@ -7,12 +7,9 @@ import (
   "fmt"
   "io/ioutil"
   "mas/crypto"
-  "mas/logger"
   "strings"
   "time"
 )
-
-var sLogger = logger.NewLogger(logger.DEBUG)
 
 // License ...
 type License struct {

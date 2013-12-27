@@ -1,7 +1,7 @@
 .PHONY: windows
 
 all:
-	go build app.go
+	go build -o myapp app.go
 
 
 windows:

@@ -9,12 +9,9 @@ import (
   "mas/app/middleware"
   "mas/core"
   "mas/license"
-  "mas/logger"
   "net/http"
   "runtime"
 )
-
-var sLogger = logger.NewLogger(logger.INFO | logger.DEBUG)
 
 func main() {
   numCPU := runtime.NumCPU()
