@@ -54,6 +54,22 @@ func NbChunk(z int) int {
   return int(32 / math.Pow(2, float64(z)))
 }
 
+// BlockToSkip ...
+func BlockToSkip(z int) int {
+  if z == 0 {
+    return 2
+  }
+  return 1
+}
+
+// GetScale ...
+func GetScale(z int) int {
+  if z == 0 {
+    return 1
+  }
+  return int(math.Pow(2, float64((z - 1))))
+}
+
 // IsWater ...
 func IsWater(blockID byte) bool {
   return blockID == core.Water ||
@@ -164,64 +180,5 @@ func RenderTile(x, y, z int, world *core.World, theme *core.Theme) *image.RGBA {
     }
   }
   region.Dispose()
-  return img
-}
-
-// BlockToSkip ...
-func BlockToSkip(z int) int {
-  if z == 0 {
-    return 2
-  }
-  return 1
-}
-
-// GetScale ...
-func GetScale(z int) int {
-  if z == 0 {
-    return 1
-  }
-  return int(math.Pow(2, float64((z - 1))))
-}
-
-// RenderRegionTile render a tile for a given region.
-// region the region to render.
-// It returns an image tile.
-func RenderRegionTile(region *core.Region, theme *core.Theme) *image.RGBA {
-  blockSize := 1
-  chunkSize := 16 * blockSize
-  regionSize := 32 * chunkSize
-
-  img := CreateImage(regionSize, regionSize)
-
-  if !region.Exists() {
-    return img
-  }
-
-  for chunkX := 0; chunkX < 32; chunkX++ {
-    for chunkZ := 0; chunkZ < 32; chunkZ++ {
-      chunk := region.GetChunk(chunkX, chunkZ)
-      if chunk == nil {
-        continue
-      }
-
-      heightmap := chunk.HeightMap()
-
-      for block := 0; block < 256; block++ {
-        chunkY := uint8(heightmap[block])
-        blockX := block % 16
-        blockZ := block / 16
-        blockID := chunk.BlockID(blockX, int(chunkY), blockZ)
-        c := theme.GetByID(blockID)
-        c2 := color.RGBA{c.Red, c.Green, c.Blue, c.Alpha}
-
-        FillRect(img,
-          block%16+chunkX*chunkSize,
-          block/16+chunkZ*chunkSize,
-          blockSize,
-          blockSize,
-          c2)
-      }
-    }
-  }
   return img
 }
