@@ -12,9 +12,9 @@ import (
 
 // Player ...
 type Player struct {
-  mPlayerManager *PlayerManager
-  mName          string
-  mX, mY, mZ     float64
+  playerManager *PlayerManager
+  name          string
+  x, y, z       float64
 }
 
 // PlayerJSON ...
@@ -25,35 +25,35 @@ type PlayerJSON struct {
 
 // ToJSON ...
 func (p *Player) ToJSON() PlayerJSON {
-  return PlayerJSON{p.mName, p.mX, p.mY, p.mZ}
+  return PlayerJSON{p.name, p.x, p.y, p.z}
 }
 
 // NewPlayer ...
-func NewPlayer(pPlayerManager *PlayerManager, pName string) *Player {
+func NewPlayer(playerManager *PlayerManager, name string) *Player {
   player := new(Player)
-  player.mPlayerManager = pPlayerManager
-  player.mName = pName
+  player.playerManager = playerManager
+  player.name = name
   return player
 }
 
 // FilePath ...
 func (p *Player) FilePath() string {
-  return path.Join(p.mPlayerManager.mWorldPath, PlayerDir, p.mName+".dat")
+  return path.Join(p.playerManager.worldPath, PlayerDir, p.name+".dat")
 }
 
 // X ...
 func (p *Player) X() float64 {
-  return p.mX
+  return p.x
 }
 
 // Y ...
 func (p *Player) Y() float64 {
-  return p.mY
+  return p.y
 }
 
 // Z ...
 func (p *Player) Z() float64 {
-  return p.mZ
+  return p.z
 }
 
 // Player ...
@@ -77,8 +77,8 @@ func (p *Player) Player() *Player {
   positionX := positionList.Get(0).(*nbt.TagNodeDouble)
   positionY := positionList.Get(1).(*nbt.TagNodeDouble)
   positionZ := positionList.Get(2).(*nbt.TagNodeDouble)
-  p.mX = positionX.Data
-  p.mY = positionY.Data
-  p.mZ = positionZ.Data
+  p.x = positionX.Data
+  p.y = positionY.Data
+  p.z = positionZ.Data
   return p
 }

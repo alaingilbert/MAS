@@ -2,7 +2,7 @@ package nbt
 
 // TagNodeIntArray ...
 type TagNodeIntArray struct {
-  mData []int32
+  data []int32
 }
 
 // NewTagNodeIntArray ...
@@ -11,6 +11,6 @@ func NewTagNodeIntArray(data []int32) *TagNodeIntArray {
 }
 
 // Data ...
-func (t TagNodeIntArray) Data() []int32 {
-  return t.mData
+func (t *TagNodeIntArray) Data() []int32 {
+  return t.data
 }

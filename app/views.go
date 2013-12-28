@@ -127,8 +127,8 @@ func ThemeHandler(res http.ResponseWriter, req *http.Request, theme *core.Theme)
 
 // TileHandler ...
 func TileHandler(w http.ResponseWriter, req *http.Request,
-  params martini.Params, pWorld *core.World,
-  pTheme *core.Theme) {
+  params martini.Params, world *core.World,
+  theme *core.Theme) {
   x, _ := strconv.Atoi(params["x"])
   y, _ := strconv.Atoi(params["y"])
   z, _ := strconv.Atoi(params["z"])
@@ -137,8 +137,8 @@ func TileHandler(w http.ResponseWriter, req *http.Request,
   file, err := os.Open(path + fileName)
   // No image found. Try to render it.
   if err != nil {
-    if pWorld.RegionManager().GetRegionFromXYZ(x, y, z).Exists() {
-      img := draw.RenderTile(x, y, z, pWorld, pTheme)
+    if world.RegionManager().GetRegionFromXYZ(x, y, z).Exists() {
+      img := draw.RenderTile(x, y, z, world, theme)
       png.Encode(w, img)
       draw.Save(path, fileName, img)
       return
@@ -154,7 +154,7 @@ func TileHandler(w http.ResponseWriter, req *http.Request,
 
 // RenewTilesHandler ...
 func RenewTilesHandler(res http.ResponseWriter, req *http.Request,
-  pSettings *core.Settings, pTheme *core.Theme) {
+  pSettings *core.Settings, theme *core.Theme) {
   os.RemoveAll("./tiles/")
-  pTheme.Reload()
+  theme.Reload()
 }

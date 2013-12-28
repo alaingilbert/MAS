@@ -14,35 +14,33 @@ import (
 
 // Region represent a minecraft region.
 type Region struct {
-  mX, mZ         int
-  mRegionManager *RegionManager
-  mChunks        [1024]*Chunk
-  mData          nbt.NbtTree
-  mFile          *os.File
+  x, z          int
+  regionManager *RegionManager
+  file          *os.File
 }
 
 // NewRegion instantiate a Region.
-// pRegionManager pointer to the region manager who is calling the function.
-// pX region X axis.
-// pZ region Z axis.
+// regionManager pointer to the region manager who is calling the function.
+// regionX region X axis.
+// regionZ region Z axis.
 // It returns a pointer to the region.
-func NewRegion(pRegionManager *RegionManager, pRegionX, pRegionZ int) *Region {
+func NewRegion(regionManager *RegionManager, regionX, regionZ int) *Region {
   region := new(Region)
-  region.mRegionManager = pRegionManager
-  region.mX = pRegionX
-  region.mZ = pRegionZ
-  region.mFile = nil
+  region.regionManager = regionManager
+  region.x = regionX
+  region.z = regionZ
+  region.file = nil
   return region
 }
 
 // NewRegionFromXYZ ...
-func NewRegionFromXYZ(pRegionManager *RegionManager, pX, pY, pZ int) *Region {
+func NewRegionFromXYZ(regionManager *RegionManager, x, y, z int) *Region {
   region := new(Region)
-  regionX, regionZ := region.RegionCoordinatesFromXYZ(pX, pY, pZ)
-  region.mRegionManager = pRegionManager
-  region.mX = regionX
-  region.mZ = regionZ
-  region.mFile = nil
+  regionX, regionZ := region.RegionCoordinatesFromXYZ(x, y, z)
+  region.regionManager = regionManager
+  region.x = regionX
+  region.z = regionZ
+  region.file = nil
   return region
 }
 
@@ -55,20 +53,20 @@ func (r *Region) RegionCoordinatesFromXYZ(x, y, z int) (int, int) {
 
 // Dispose ...
 func (r *Region) Dispose() {
-  r.mFile.Close()
-  r.mFile = nil
+  r.file.Close()
+  r.file = nil
 }
 
 // FileName get the file name for the region.
 // It returns the file name for the region.
 func (r *Region) FileName() string {
-  return fmt.Sprintf("r.%d.%d.mca", r.mX, r.mZ)
+  return fmt.Sprintf("r.%d.%d.mca", r.x, r.z)
 }
 
 // FilePath get the file path.
 // It returns the file path.
 func (r *Region) FilePath() string {
-  return path.Join(r.mRegionManager.RegionPath(), RegionDir)
+  return path.Join(r.regionManager.RegionPath(), RegionDir)
 }
 
 // Exists ...
@@ -85,40 +83,40 @@ func (r *Region) Exists() bool {
 }
 
 // GetChunk get the information for a specific chunk.
-// pLocalX X position of the chunk in the region.
-// pLocalZ Z position of the chunk in the region.
+// localX X position of the chunk in the region.
+// localZ Z position of the chunk in the region.
 // It returns a pointer to the chunk.
-func (r *Region) GetChunk(pLocalX, pLocalZ int) *Chunk {
-  if r.mFile == nil {
+func (r *Region) GetChunk(localX, localZ int) *Chunk {
+  if r.file == nil {
     file, err := os.Open(path.Join(r.FilePath(), r.FileName()))
     if err != nil {
       log.Println(err)
     }
-    r.mFile = file
+    r.file = file
   }
-  location := r.chunkCoordinate(pLocalX, pLocalZ)
-  r.mFile.Seek(int64(location), 0)
+  location := r.chunkCoordinate(localX, localZ)
+  r.file.Seek(int64(location), 0)
   offsetBytes := make([]byte, 3)
   var offset int64
-  r.mFile.Read(offsetBytes)
+  r.file.Read(offsetBytes)
   for _, value := range offsetBytes {
     offset = offset<<8 + int64(value)
   }
 
   if offset > 0 {
-    r.mFile.Seek(offset*4096, 0)
+    r.file.Seek(offset*4096, 0)
     lengthBytes := make([]byte, 4)
-    r.mFile.Read(lengthBytes)
+    r.file.Read(lengthBytes)
     var length int64
     for _, value := range lengthBytes {
       length = length<<8 + int64(value)
     }
     versionByte := make([]byte, 1)
-    r.mFile.Read(versionByte)
+    r.file.Read(versionByte)
     version := int(versionByte[0])
     if version == 2 {
       compress := make([]byte, length-1)
-      r.mFile.Read(compress)
+      r.file.Read(compress)
       reader, err := zlib.NewReader(bytes.NewReader(compress))
       if err != nil {
         log.Fatal(err)
@@ -130,7 +128,7 @@ func (r *Region) GetChunk(pLocalX, pLocalZ int) *Chunk {
       s := buf.String()
       re := strings.NewReader(s)
       tree := nbt.NewNbtTree(re)
-      chunk := NewChunk(pLocalX, pLocalZ)
+      chunk := NewChunk(localX, localZ)
       chunk.SetData(tree)
       return chunk
     }
@@ -141,6 +139,6 @@ func (r *Region) GetChunk(pLocalX, pLocalZ int) *Chunk {
 
 // ChunkCoordinate get the offset of the chunk informations in the file.
 // It return the offset in bytes.
-func (r *Region) chunkCoordinate(pLocalX, pLocalZ int) int {
-  return (pLocalX + pLocalZ*32) * 4
+func (r *Region) chunkCoordinate(localX, localZ int) int {
+  return (localX + localZ*32) * 4
 }

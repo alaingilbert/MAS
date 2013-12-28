@@ -150,7 +150,7 @@
   <Block id="147" red="255" green="0"   blue="0"   alpha="255" name="light_weighted_pressure_plate"></Block>
   <Block id="148" red="183" green="183" blue="183" alpha="255" name="heavy_weighted_pressure_plate"></Block>
   <Block id="149" red="255" green="0"   blue="0"   alpha="255" name="unpowered_comparator"></Block>
-
+  <Block id="150" red="255" green="0"   blue="0"   alpha="255" name="powered_comparator"></Block>
   <Block id="151" red="255" green="0"   blue="0"   alpha="255" name="daylight_detector"></Block>
   <Block id="152" red="165" green="39"  blue="39"  alpha="255" name="redstone_block"></Block>
   <Block id="153" red="255" green="0"   blue="0"   alpha="255" name="quartz_ore"></Block>

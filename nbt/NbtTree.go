@@ -7,139 +7,139 @@ import (
   "math"
 )
 
-// NewNbtTree ...
+// NbtTree represents an NbtTree.
+type NbtTree struct {
+  Stream   io.Reader
+  root     *TagNodeCompound
+  rootName string
+}
+
+// NewNbtTree creates a new NbtTree.
 func NewNbtTree(r io.Reader) *NbtTree {
   tree := new(NbtTree)
   tree.Stream = r
-  tree._root = tree.ReadRoot()
+  tree.root = tree.ReadRoot()
   return tree
 }
 
-// NbtTree ...
-type NbtTree struct {
-  Stream    io.Reader
-  _root     *TagNodeCompound
-  _rootName string
-}
-
-// Root ...
+// Root get the root element of the NbtTree.
 func (n *NbtTree) Root() *TagNodeCompound {
-  return n._root
+  return n.root
 }
 
 // ReadRoot ...
 func (n *NbtTree) ReadRoot() *TagNodeCompound {
   tagType := TagType(ReadByte(n.Stream))
   if tagType == TagCompound {
-    n._rootName = ReadString(n.Stream)
+    n.rootName = ReadString(n.Stream)
     return n.ReadValue(tagType).(*TagNodeCompound)
   }
   return new(TagNodeCompound)
 }
 
 // ReadValue ...
-func (n *NbtTree) ReadValue(tagType TagType) ITagNode {
-  //fmt.Println("-> (ReadValue)", tagType)
-  switch tagType {
+func (n *NbtTree) ReadValue(pTagType TagType) ITagNode {
+  var tagNode ITagNode
+
+  switch pTagType {
   case TagByte:
-    return n.ReadByte()
+    tagNode = n.ReadByte()
   case TagCompound:
-    return n.ReadCompound()
+    tagNode = n.ReadCompound()
   case TagList:
-    return n.ReadList()
+    tagNode = n.ReadList()
   case TagByteArray:
-    return n.ReadByteArray()
+    tagNode = n.ReadByteArray()
   case TagLong:
-    return n.ReadLong()
+    tagNode = n.ReadLong()
   case TagInt:
-    return n.ReadInt()
+    tagNode = n.ReadInt()
   case TagIntArray:
-    return n.ReadIntArray()
+    tagNode = n.ReadIntArray()
   case TagShort:
-    return n.ReadShort()
+    tagNode = n.ReadShort()
   case TagFloat:
-    return n.ReadFloat()
+    tagNode = n.ReadFloat()
   case TagDouble:
-    return n.ReadDouble()
+    tagNode = n.ReadDouble()
   case TagString:
-    return n.ReadString()
+    tagNode = n.ReadString()
   default:
-    log.Println("Unknow TagNode", tagType)
-    return TagNodeUnknown{}
+    log.Println("Unknow TagNode", pTagType)
+    tagNode = NewTagNodeUnknown()
   }
+
+  return tagNode
 }
 
 // ReadFloat ...
-func (n *NbtTree) ReadFloat() ITagNode {
-  val := NewTagNodeFloat(ReadFloat(n.Stream))
-  return val
+func (n *NbtTree) ReadFloat() *TagNodeFloat {
+  floatRead := ReadFloat(n.Stream)
+  return NewTagNodeFloat(floatRead)
 }
 
 // ReadString ...
-func (n *NbtTree) ReadString() ITagNode {
-  str := ReadString(n.Stream)
-  val := NewTagNodeString(str)
-  return val
+func (n *NbtTree) ReadString() *TagNodeString {
+  stringRead := ReadString(n.Stream)
+  return NewTagNodeString(stringRead)
 }
 
 // ReadDouble ...
-func (n *NbtTree) ReadDouble() ITagNode {
-  val := NewTagNodeDouble(ReadDouble(n.Stream))
-  return val
+func (n *NbtTree) ReadDouble() *TagNodeDouble {
+  doubleRead := ReadDouble(n.Stream)
+  return NewTagNodeDouble(doubleRead)
 }
 
 // ReadShort ...
-func (n *NbtTree) ReadShort() ITagNode {
-  val := NewTagNodeShort(ReadShort(n.Stream))
-  return val
+func (n *NbtTree) ReadShort() *TagNodeShort {
+  shortRead := ReadShort(n.Stream)
+  return NewTagNodeShort(shortRead)
 }
 
-// ReadIntArray ...
-func (n *NbtTree) ReadIntArray() ITagNode {
+// ReadIntArray read an array of TAG_Int's payloads.
+func (n *NbtTree) ReadIntArray() *TagNodeIntArray {
   size := ReadInt(n.Stream)
-  data := make([]int32, size)
+  intArray := make([]int32, size)
   for i := int32(0); i < size; i++ {
     tmpInt := ReadInt(n.Stream)
-    data[i] = tmpInt
+    intArray[i] = tmpInt
   }
-  val := NewTagNodeIntArray(data)
-  return val
+  return NewTagNodeIntArray(intArray)
 }
 
-// ReadByte ...
-func (n *NbtTree) ReadByte() ITagNode {
-  val := NewTagNodeByte(ReadByte(n.Stream))
-  return val
+// ReadByte read a signed integral type. Sometimes used for booleans.
+func (n *NbtTree) ReadByte() *TagNodeByte {
+  byteRead := ReadByte(n.Stream)
+  return NewTagNodeByte(byteRead)
 }
 
-// ReadInt ...
-func (n *NbtTree) ReadInt() ITagNode {
-  val := NewTagNodeInt(ReadInt(n.Stream))
-  return val
+// ReadInt read a signed integral type.
+func (n *NbtTree) ReadInt() *TagNodeInt {
+  intRead := ReadInt(n.Stream)
+  return NewTagNodeInt(intRead)
 }
 
-// ReadLong ...
-func (n *NbtTree) ReadLong() ITagNode {
-  long := ReadLong(n.Stream)
-  val := NewTagNodeLong(long)
-  return val
+// ReadLong read a signed integral type.
+func (n *NbtTree) ReadLong() *TagNodeLong {
+  longRead := ReadLong(n.Stream)
+  return NewTagNodeLong(longRead)
 }
 
-// ReadByteArray ...
-func (n *NbtTree) ReadByteArray() ITagNode {
+// ReadByteArray read an array of bytes.
+func (n *NbtTree) ReadByteArray() *TagNodeByteArray {
   size := ReadInt(n.Stream)
   if size < 0 {
     log.Fatal("Read Neg")
   }
-  data := make([]byte, size)
-  n.Stream.Read(data)
+  byteArray := make([]byte, size)
+  n.Stream.Read(byteArray)
 
-  val := NewTagNodeByteArray(data)
-  return val
+  return NewTagNodeByteArray(byteArray)
 }
 
-// ReadList ...
-func (n *NbtTree) ReadList() ITagNode {
+// ReadList read a list of tag payloads, without repeated tag IDs or any tag
+// names.
+func (n *NbtTree) ReadList() *TagNodeList {
   tagID := TagType(ReadByte(n.Stream))
   length := ReadInt(n.Stream)
   list := make([]ITagNode, length)
@@ -153,21 +153,24 @@ func (n *NbtTree) ReadList() ITagNode {
   return val
 }
 
-// ReadCompound ...
-func (n *NbtTree) ReadCompound() ITagNode {
-  val := NewTagNodeCompound(make(map[string]ITagNode))
-  for n.ReadTag(val) {
+// ReadCompound read a list of fully formed tags, including their IDs, names,
+// and payloads. No two tags may have the same name
+func (n *NbtTree) ReadCompound() *TagNodeCompound {
+  entriesMap := make(map[string]ITagNode)
+  tagNodeCompound := NewTagNodeCompound(entriesMap)
+  for n.ReadTag(tagNodeCompound) {
   }
-  return val
+  return tagNodeCompound
 }
 
-// ReadTag ...
-func (n *NbtTree) ReadTag(parent *TagNodeCompound) bool {
+// ReadTag read a tag from the nbtTree stream.
+// Return false if tagEnd was found, true otherwise.
+func (n *NbtTree) ReadTag(pParent *TagNodeCompound) bool {
   tagType := TagType(ReadByte(n.Stream))
   if tagType != TagEnd {
     name := ReadString(n.Stream)
     value := n.ReadValue(tagType)
-    parent.Entries[name] = value
+    pParent.Entries[name] = value
     return true
   }
   return false

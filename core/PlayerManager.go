@@ -12,13 +12,13 @@ const PlayerDir = "players"
 
 // PlayerManager ...
 type PlayerManager struct {
-  mWorldPath string
+  worldPath string
 }
 
 // NewPlayerManager ...
-func NewPlayerManager(pWorldPath string) *PlayerManager {
+func NewPlayerManager(worldPath string) *PlayerManager {
   playerManager := new(PlayerManager)
-  playerManager.mWorldPath = pWorldPath
+  playerManager.worldPath = worldPath
   return playerManager
 }
 
@@ -32,14 +32,14 @@ func (p *PlayerManager) GetPlayers() []*Player {
 }
 
 // GetPlayer ...
-func (p *PlayerManager) GetPlayer(pName string) *Player {
-  player := NewPlayer(p, pName).Player()
+func (p *PlayerManager) GetPlayer(name string) *Player {
+  player := NewPlayer(p, name).Player()
   return player
 }
 
 // PlayerNames ...
 func (p *PlayerManager) PlayerNames() []string {
-  playersDir, err := os.Open(path.Join(p.mWorldPath, PlayerDir))
+  playersDir, err := os.Open(path.Join(p.worldPath, PlayerDir))
   if err != nil {
     log.Panic(err)
   }
