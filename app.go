@@ -1,8 +1,12 @@
 package main
 
 import (
+	"io/ioutil"
+	"bytes"
+	"encoding/binary"
   "fmt"
   "github.com/codegangsta/martini"
+  "github.com/bearbin/mcgorcon"
   "github.com/codegangsta/martini-contrib/sessions"
   "mas/api"
   "mas/app"
@@ -11,6 +15,7 @@ import (
   "mas/license"
   "net/http"
   "runtime"
+	"net"
 )
 
 func main() {
@@ -20,6 +25,34 @@ func main() {
   // Load license
   go license.LicenseVerifier()
   license.PrintLicenseInfos()
+
+  // Load minecraft client
+	mcgorcon.Dial("localhost", 25565, "test")
+	conn, err := net.Dial("tcp", "localhost:25565")
+	if err != nil {
+		fmt.Println("ERR")
+	}
+	var buf bytes.Buffer
+	username := [64]byte{}
+	key := [64]byte{}
+	for i := 0; i < 64; i++ {
+		username[i] = 0x20
+		key[i] = 0x20
+	}
+	copy(username[:], []byte("alaingilbert"))
+	copy(key[:], []byte("verifkey"))
+	binary.Write(&buf, binary.LittleEndian, []byte{0x00})
+	binary.Write(&buf, binary.LittleEndian, []byte{0x07})
+	binary.Write(&buf, binary.LittleEndian, username)
+	binary.Write(&buf, binary.LittleEndian, key)
+	binary.Write(&buf, binary.LittleEndian, []byte{0x00})
+	fmt.Println(buf.Bytes())
+	conn.Write(buf.Bytes())
+
+	result, err := ioutil.ReadAll(conn)
+	//var tmp = make([]byte, 1024)
+	//conn.Read(tmp)
+	fmt.Println(result, err)
 
   // Load settings
   settings, _ := core.LoadSettings()

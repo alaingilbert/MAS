@@ -81,7 +81,7 @@
         maxZoom: 5,
         zoomAnimation: false,
         zoomControl: false
-      }).setView([1, 0], 1);
+      }).setView([0, 0], 1);
       L.tileLayer('/tile/{z}/{x}/{y}.png', {
         tileSize: 256,
         continuousWorld: true
@@ -125,7 +125,7 @@
 
       GetPlayersPositions();
 
-      setInterval(GetPlayersPositions, 10000);
+      //setInterval(GetPlayersPositions, 10000);
     </script>
   </body>
 </html>

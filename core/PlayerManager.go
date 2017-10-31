@@ -1,7 +1,7 @@
 package core
 
 import (
-  "log"
+  "fmt"
   "os"
   "path"
   "strings"
@@ -41,7 +41,7 @@ func (p *PlayerManager) GetPlayer(name string) *Player {
 func (p *PlayerManager) PlayerNames() []string {
   playersDir, err := os.Open(path.Join(p.worldPath, PlayerDir))
   if err != nil {
-    log.Panic(err)
+    fmt.Println("Players folder not found.")
   }
   defer playersDir.Close()
   var newFiles []string
